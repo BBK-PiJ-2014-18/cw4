@@ -75,6 +75,11 @@ public class ContactManagerImpl implements ContactManager {
 		if(name == null || notes == null) {
 			throw new NullPointerException("Name/Notes may not be null");
 		}
+		//as some methods search contacts by name do not allow empty string
+		//notes may be empty as not searched for (and we have feature to add later)
+		if(name == "") {
+			throw new IllegalArgumentException("Name may not be empty string"); 
+		}
 		countContacts++;
 		int contactId = countContacts;
 		contacts.add(new ContactImpl(contactId, name, notes));
