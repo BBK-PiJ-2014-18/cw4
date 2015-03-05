@@ -12,4 +12,17 @@ public class ContactManagerTest {
 		assertEquals("Mark Kingsbury", result[0].getName());
 		assertEquals("mk notes", result[0].getNotes());
 	}
+
+	@Test(expected = NullPointerException.class)
+	public void testAddNullNameContactThrowsNullPointerException() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact(null, "mk notes");
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testAddNullNotesContactThrowsNullPointerException() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Mark Kingsbury", null);
+	}	
+
 }
