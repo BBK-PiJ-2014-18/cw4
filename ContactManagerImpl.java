@@ -72,6 +72,9 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public void addNewContact(String name, String notes) {
+		if(name == null || notes == null) {
+			throw new NullPointerException("Name/Notes may not be null");
+		}
 		countContacts++;
 		int contactId = countContacts;
 		contacts.add(new ContactImpl(contactId, name, notes));
