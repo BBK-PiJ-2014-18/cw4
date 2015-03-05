@@ -24,5 +24,10 @@ public class ContactManagerTest {
 		ContactManager cm = new ContactManagerImpl();
 		cm.addNewContact("Mark Kingsbury", null);
 	}	
-
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddEmptyStringNameContactThrowsNullPointerException() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("", "mk notes");
+	}
 }
