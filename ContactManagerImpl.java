@@ -107,6 +107,12 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public Set<Contact> getContacts(String name) {
+		if (name == null) {
+			throw new NullPointerException("Parameter may not be null");
+		}
+		if (name == "") {
+			throw new IllegalArgumentException("Parameter may not be empty string");
+		}
 		Set<Contact> result = new HashSet<Contact>();
 		for(Contact contact: contacts) {
 			if(contact.getName().contains(name)) {

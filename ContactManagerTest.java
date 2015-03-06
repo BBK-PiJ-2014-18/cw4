@@ -178,11 +178,10 @@ public class ContactManagerTest {
 		Set<Contact> actual = cm.getContacts(nullString);
 	}
 	
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testErrorHandleGetContactsByEmptyString () {
 		ContactManager cm = new ContactManagerImpl();
 		cm.addNewContact("Kingsbury", "k notes");
-//		String nullString = null;
 		Set<Contact> actual = cm.getContacts("");
 	}
 	
