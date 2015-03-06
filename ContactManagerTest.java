@@ -49,6 +49,33 @@ public class ContactManagerTest {
 		assertEquals(expected, actual);	
 	}
 	
+	//tests relating to notes field of Contact
+	
+	@Test
+	public void testContactNotesCanBeEmptyString() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "");
+		Set<Contact> expected = new HashSet<Contact>();
+		expected.add(new ContactImpl(1, "Anna Kingsbury", ""));
+		Set<Contact> actual = cm.getContacts(1);
+		assertEquals(1, actual.size());		
+		assertEquals(expected, actual);	
+	}
+	
+	@Test
+	public void testAddingNotesToContact() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "");
+		Set<Contact> anna = cm.getContacts(1);
+		for(Contact a: anna) {
+			a.addNotes("Anna added Notes");
+		}
+		Set<Contact> expected = new HashSet<Contact>();
+		expected.add(new ContactImpl(1, "Anna Kingsbury", "Anna added Notes"));
+		Set<Contact> actual = cm.getContacts(1);
+		assertEquals(1, actual.size());		
+		assertEquals(expected, actual);	
+	}
 
 	
 }
