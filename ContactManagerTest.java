@@ -1,4 +1,8 @@
 import static org.junit.Assert.assertEquals;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Test;
 
 public class ContactManagerTest {
@@ -30,4 +34,21 @@ public class ContactManagerTest {
 		ContactManager cm = new ContactManagerImpl();
 		cm.addNewContact("", "mk notes");
 	}
+	
+	@Test
+	public void testAddThreeContactsAndGetTwoBack() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		cm.addNewContact("Brian Kingsbury", "bk notes");
+		cm.addNewContact("Cathy Kingsbury", "ck notes");
+		Set<Contact> expected = new HashSet<Contact>();
+		expected.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		expected.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));
+		Set<Contact> actual = cm.getContacts(1, 3);
+		assertEquals(2, actual.size());		
+		assertEquals(expected, actual);	
+	}
+	
+
+	
 }
