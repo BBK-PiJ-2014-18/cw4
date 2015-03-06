@@ -88,12 +88,18 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public Set<Contact> getContacts(int... ids) {
 		Set<Contact> result = new HashSet<Contact>();
+		boolean idFound;
 		for(int nextId: ids) {
+			idFound = false;
 			for (Contact contact: contacts) {
 				if(contact.getId() == nextId) {
 					result.add(contact);
+					idFound = true;
 					break;
 				}
+			}
+			if(!idFound) {
+				throw new IllegalArgumentException("ID does not correspond to a real contact");
 			}
 		}
 		return result;

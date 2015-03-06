@@ -99,10 +99,13 @@ public class ContactManagerTest {
 	@Test(expected = IllegalArgumentException.class) 
 	public void testContactIdDoesNotCorrespondToARealContact() {
 		ContactManager cm = new ContactManagerImpl();
-		cm.addNewContact("Anna Kingsbury", "ak notes");
-		cm.addNewContact("Brian Kingsbury", "bk notes");
-		cm.addNewContact("Cathy Kingsbury", "ck notes");
+//		cm.addNewContact("Anna Kingsbury", "ak notes");
+//		cm.addNewContact("Brian Kingsbury", "bk notes");
+//		cm.addNewContact("Cathy Kingsbury", "ck notes");
 		Set<Contact> actual = cm.getContacts(4);
 	}
+	
+	
+	
 	
 }
