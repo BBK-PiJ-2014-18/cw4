@@ -99,13 +99,75 @@ public class ContactManagerTest {
 	@Test(expected = IllegalArgumentException.class) 
 	public void testContactIdDoesNotCorrespondToARealContact() {
 		ContactManager cm = new ContactManagerImpl();
-//		cm.addNewContact("Anna Kingsbury", "ak notes");
-//		cm.addNewContact("Brian Kingsbury", "bk notes");
-//		cm.addNewContact("Cathy Kingsbury", "ck notes");
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		cm.addNewContact("Brian Kingsbury", "bk notes");
+		cm.addNewContact("Cathy Kingsbury", "ck notes");
 		Set<Contact> actual = cm.getContacts(4);
 	}
 	
+	@Test
+	public void testGetAnEmptySetBackIfPassNoIds() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		cm.addNewContact("Brian Kingsbury", "bk notes");
+		cm.addNewContact("Cathy Kingsbury", "ck notes");
+		Set<Contact> expected = new HashSet<Contact>();
+		Set<Contact> actual = cm.getContacts();
+		assertEquals(0, actual.size());		
+		assertEquals(expected, actual);	
+	}
 	
+	@Test
+	public void testGetContactsByNameSingleContact() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		cm.addNewContact("Brian Kingsbury", "bk notes");
+		cm.addNewContact("Cathy Smith", "cs notes");
+		Set<Contact> expected = new HashSet<Contact>();
+		expected.add(new ContactImpl(3, "Cathy Smith", "cs notes"));
+		Set<Contact> actual = cm.getContacts("Smith");
+		assertEquals(expected, actual);	
+	}	
+	
+	@Test
+	public void testGetContactsByNameMulitpleContacts() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		cm.addNewContact("Brian Kingsbury", "bk notes");
+		cm.addNewContact("Cathy Smith", "cs notes");
+		Set<Contact> expected = new HashSet<Contact>();
+		expected.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		expected.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		Set<Contact> actual = cm.getContacts("Kingsbury");
+		assertEquals(expected, actual);	
+	}	
+
+	@Test
+	public void testGetContactsByNameThatIsNotPresent() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		cm.addNewContact("Brian Kingsbury", "bk notes");
+		cm.addNewContact("Cathy Smith", "cs notes");
+		Set<Contact> expected = new HashSet<Contact>();
+		Set<Contact> actual = cm.getContacts("Jones");
+		assertEquals(0, actual.size());		
+		assertEquals(expected, actual);	
+	}
+	
+	@Test
+	public void testGetBothContactsByNameThatIsDuplicated() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Kingsbury", "k notes");
+		cm.addNewContact("Cathy Smith", "cs notes");
+		cm.addNewContact("Kingsbury", "k notes");
+		Set<Contact> expected = new HashSet<Contact>();
+		expected.add(new ContactImpl(1, "Kingsbury", "k notes"));
+		expected.add(new ContactImpl(3, "Kingsbury", "k notes"));
+		Set<Contact> actual = cm.getContacts("Kingsbury");
+		assertEquals(2, actual.size());		
+		assertEquals(expected, actual);	
+	}
+
 	
 	
 }
