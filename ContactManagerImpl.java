@@ -91,7 +91,8 @@ public class ContactManagerImpl implements ContactManager {
 		for(int nextId: ids) {
 			for (Contact contact: contacts) {
 				if(contact.getId() == nextId) {
-					result.add(contact);
+					result.add(new ContactImpl(contact.getId(), contact.getName(), contact.getNotes()));
+					//result.add(contact);
 					break;
 				}
 			}
