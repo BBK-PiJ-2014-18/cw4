@@ -117,6 +117,8 @@ public class ContactManagerTest {
 		assertEquals(expected, actual);	
 	}
 	
+	//tests for getContacts by string in name
+	
 	@Test
 	public void testGetContactsByNameSingleContact() {
 		ContactManager cm = new ContactManagerImpl();
@@ -168,6 +170,22 @@ public class ContactManagerTest {
 		assertEquals(expected, actual);	
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void testErrorHandleGetContactsByNullParameter () {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Kingsbury", "k notes");
+		String nullString = null;
+		Set<Contact> actual = cm.getContacts(nullString);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testErrorHandleGetContactsByEmptyString () {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Kingsbury", "k notes");
+//		String nullString = null;
+		Set<Contact> actual = cm.getContacts("");
+	}
+	
 	
 	
 }
