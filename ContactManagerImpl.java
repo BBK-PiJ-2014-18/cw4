@@ -107,8 +107,13 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public Set<Contact> getContacts(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		Set<Contact> result = new HashSet<Contact>();
+		for(Contact contact: contacts) {
+			if(contact.getName().contains(name)) {
+				result.add(contact);
+			}
+		}
+		return result;
 	}
 
 	@Override
