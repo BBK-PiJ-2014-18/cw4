@@ -27,7 +27,11 @@ public class ContactImpl implements Contact {
 
 	@Override
 	public void addNotes(String note) {
-		this.contactNotes = note;
+		if(this.contactNotes == "") {
+			this.contactNotes = note;
+		} else {
+			this.contactNotes += " " + note;
+		}	
 	}
 	
 	@Override
@@ -38,18 +42,16 @@ public class ContactImpl implements Contact {
 		}
 		Contact contact = (Contact) other;
 		return (this.getId() == contact.getId()
-				&& this.getName() == contact.getName()
-				&& this.getNotes() == contact.getNotes());
+				&& this.getName().equals(contact.getName())
+				&& this.getNotes().equals(contact.getNotes()));
 	}
 	
 	@Override
 	public int hashCode() {
 		int result = 0;
 		result = 31 * result + contactId;
-		result = 31 * result + contactName.hashCode();
-		result = 31 * result + (contactNotes != null ? contactNotes.hashCode() : 0);
+		result = 31 * result + contactName.hashCode();		
+		result = 31 * result + contactNotes.hashCode();
 		return result;
 	}
-	
-	
 }
