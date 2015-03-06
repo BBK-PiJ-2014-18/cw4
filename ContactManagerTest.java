@@ -7,6 +7,8 @@ import org.junit.Test;
 
 public class ContactManagerTest {
 
+	//testing the basics of adding and getting back contacts
+	
 	@Test
 	public void testAddFirstContactAndGetItBack() {
 		ContactManager cm = new ContactManagerImpl();
@@ -92,5 +94,15 @@ public class ContactManagerTest {
 		assertEquals(expected, actual);	
 	}
 	
+	//tests relating to getting contacts back
+	
+	@Test(expected = IllegalArgumentException.class) 
+	public void testContactIdDoesNotCorrespondToARealContact() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		cm.addNewContact("Brian Kingsbury", "bk notes");
+		cm.addNewContact("Cathy Kingsbury", "ck notes");
+		Set<Contact> actual = cm.getContacts(4);
+	}
 	
 }
