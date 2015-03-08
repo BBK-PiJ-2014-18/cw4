@@ -7,18 +7,24 @@ import java.util.HashSet;
 public class ContactManagerImpl implements ContactManager {
 
 	private Set<Contact> contacts;
+	private Set<Meeting> meetings;
 	int countContacts;
+	int countMeetings;
 	
 	public ContactManagerImpl() {
 		this.contacts = new HashSet<Contact>();
+		this.meetings = new HashSet<Meeting>();
 		this.countContacts = 0;
+		this.countMeetings = 0;
 	}
 	
 	
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
-		// TODO Auto-generated method stub
-		return 0;
+		countMeetings++;
+		int meetingId = countMeetings;
+		meetings.add(new FutureMeetingImpl(meetingId, contacts, date));
+		return meetingId;
 	}
 
 	@Override
@@ -29,7 +35,11 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public FutureMeeting getFutureMeeting(int id) {
-		// TODO Auto-generated method stub
+		for(Meeting mtg: meetings) {
+			if (mtg.getId() == id) {
+				return (FutureMeeting) mtg;
+			}
+		}
 		return null;
 	}
 
