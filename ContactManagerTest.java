@@ -187,7 +187,7 @@ public class ContactManagerTest {
 		Set<Contact> actual = cm.getContacts("");
 	}
 	
-	//add and get back first future meeting
+	//add and get back first future meeting - initial elements
 	
 	@Test
 	public void testAddAndGetBackFirstFutureMeeting() {
@@ -206,6 +206,27 @@ public class ContactManagerTest {
 		assertEquals(kMtgContacts, actual.getContacts());
 		assertEquals(kMtgDate, actual.getDate());
 	}
+	
+	//add and get back first past meeting - initial elements
+	
+	@Test
+	public void testAddAndGetBackFirstPastMeeting() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Jones", "aj notes");
+		cm.addNewContact("Brian Jones", "bj notes");
+		cm.addNewContact("Cathy Jones", "cj notes");
+		Set<Contact> jMtgContacts = new HashSet<Contact>();
+		jMtgContacts.add(new ContactImpl(1, "Anna Jones", "aj notes"));
+		jMtgContacts.add(new ContactImpl(2, "Brian Jones", "bj notes"));
+		jMtgContacts.add(new ContactImpl(3, "Cathy Jones", "cj notes"));
+		Calendar jMtgDate = new GregorianCalendar(2015, 8, 15, 11, 2);
+		cm.addNewPastMeeting(jMtgContacts, jMtgDate, "New Past Meeting Notes");
+		PastMeeting actual = cm.getPastMeeting(1);
+		assertEquals(jMtgContacts, actual.getContacts());
+		assertEquals(jMtgDate, actual.getDate());
+	}
+
+	
 	
 }
 
