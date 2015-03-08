@@ -1,5 +1,7 @@
 import static org.junit.Assert.assertEquals;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -185,6 +187,48 @@ public class ContactManagerTest {
 		Set<Contact> actual = cm.getContacts("");
 	}
 	
+	//add and get back first future meeting
 	
+	@Test
+	public void testAddAndGetBackFirstFutureMeeting() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		cm.addNewContact("Brian Kingsbury", "bk notes");
+		cm.addNewContact("Cathy Kingsbury", "ck notes");
+		Set<Contact> kMtgContacts = new HashSet<Contact>();
+		kMtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		kMtgContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		kMtgContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));
+		Calendar kMtgDate = new GregorianCalendar(2015, 8, 14, 11, 2);
+		int kMtgId = cm.addFutureMeeting(kMtgContacts, kMtgDate);
+		assertEquals(1, kMtgId);
+		FutureMeeting actual = cm.getFutureMeeting(1);
+		assertEquals(kMtgContacts, actual.getContacts());
+		assertEquals(kMtgDate, actual.getDate());
+	}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
