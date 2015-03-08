@@ -49,7 +49,11 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public Meeting getMeeting(int id) {
-		// TODO Auto-generated method stub
+		for(Meeting mtg: meetings) {
+			if (mtg.getId() == id) {
+				return mtg;
+			}
+		}
 		return null;
 	}
 
