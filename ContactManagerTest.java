@@ -219,7 +219,7 @@ public class ContactManagerTest {
 		jMtgContacts.add(new ContactImpl(1, "Anna Jones", "aj notes"));
 		jMtgContacts.add(new ContactImpl(2, "Brian Jones", "bj notes"));
 		jMtgContacts.add(new ContactImpl(3, "Cathy Jones", "cj notes"));
-		Calendar jMtgDate = new GregorianCalendar(2015, 8, 15, 11, 2);
+		Calendar jMtgDate = new GregorianCalendar(2014, 8, 15, 11, 2);
 		cm.addNewPastMeeting(jMtgContacts, jMtgDate, "New Past Meeting Notes");
 		PastMeeting actual = cm.getPastMeeting(1);
 		assertEquals(jMtgContacts, actual.getContacts());

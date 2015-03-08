@@ -29,7 +29,11 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public PastMeeting getPastMeeting(int id) {
-		// TODO Auto-generated method stub
+		for(Meeting mtg: meetings) {
+			if (mtg.getId() == id) {
+				return (PastMeeting) mtg;
+			}
+		}
 		return null;
 	}
 
@@ -70,8 +74,9 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public void addNewPastMeeting(Set<Contact> contacts, Calendar date,
 			String text) {
-		// TODO Auto-generated method stub
-
+		countMeetings++;
+		int meetingId = countMeetings;
+		meetings.add(new PastMeetingImpl(meetingId, contacts, date, text));
 	}
 
 	@Override
