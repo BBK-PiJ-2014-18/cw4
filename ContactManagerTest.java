@@ -1,4 +1,5 @@
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -308,6 +309,59 @@ public class ContactManagerTest {
 		PastMeeting castActual = (PastMeeting) cm.getMeeting(2);
 		assertEquals("New Past Meeting Notes", castActual.getNotes());
 	}
+
+	//tests for 3 methods where get meeting by id
+	
+	@Test
+	public void testGetMeetingReturnsNullIfNoMtgWithThatID() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		assertNull(cm.getMeeting(3));
+	}
+	
+	@Test
+	public void testGetPastMeetingReturnsNullIfNoMtgWithThatID() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		assertNull(cm.getPastMeeting(3));
+	}
+	
+	@Test
+	public void testGetFutureMeetingReturnsNullIfNoMtgWithThatID() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		assertNull(cm.getFutureMeeting(3));
+	}
+
+	@Test
+	public void testGetPastMeetingExceptionWhenMtgIdIsMtgIsAN_ACTUALFutureMeeting() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);		
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Meeting with that ID is a FutureMeeting");			
+		cm.getPastMeeting(1);
+	}
+	
+	@Test
+	public void testGetFutureMeetingExceptionWhenMtgIdIsAN_ACTUALPastMeeting() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Meeting with that ID is a PastMeeting");	
+		cm.getFutureMeeting(2);
+	}	
+	
+	//is this logic required?  or can return a mtg as long as type is OK (regardless of date)
+	@Ignore @Test
+	public void testGetFutureMeetingExceptionWhenMtgIdIsMtgWITH_DATEInPast() {
+		//need contact.txt in place to build this test
+	}
+
+	//is this logic required?  or can return a mtg as long as type is OK
+	@Ignore @Test
+	public void testGetPastMeetingExceptionWhenMtgIdIsMtgWITH_DATEInFuture() {
+		//need contact.txt in place to build this test
+	}
 	
 	//exception handling on addFutureMeeting
 	
@@ -471,8 +525,10 @@ public class ContactManagerTest {
 		thrown.expectMessage("NewPastMeeting arguments may not be null");
 		cm.addNewPastMeeting(contacts, date, null);
 	}
-		
 	
+
+	// tests for AddMeetingNotes
+
 	// TODO: this test ignored for now (need to have Contacts.txt in place before can run).
 	@Ignore @Test
 	public void testAddMeetingNotesConvertsFutureMtgToPastMtg() {
