@@ -30,6 +30,8 @@ public class ContactManagerTest {
 		cm.addNewPastMeeting(jMtgContacts, jMtgDate, "New Past Meeting Notes");
 	}
 		
+	//CONTACT TESTS START HERE
+	
 	//testing the basics of adding and getting back contacts
 	
 	@Test
@@ -208,6 +210,8 @@ public class ContactManagerTest {
 		Set<Contact> actual = cm.getContacts("");
 	}
 	
+	//MEETING TESTS START HERE
+	
 	//add and get back first future meeting - initial elements
 	
 	@Test
@@ -216,16 +220,16 @@ public class ContactManagerTest {
 		cm.addNewContact("Anna Kingsbury", "ak notes");
 		cm.addNewContact("Brian Kingsbury", "bk notes");
 		cm.addNewContact("Cathy Kingsbury", "ck notes");
-		Set<Contact> kMtgContacts = new HashSet<Contact>();
-		kMtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
-		kMtgContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
-		kMtgContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));
-		Calendar kMtgDate = new GregorianCalendar(2015, 8, 14, 11, 2);
-		int kMtgId = cm.addFutureMeeting(kMtgContacts, kMtgDate);
-		assertEquals(1, kMtgId);
+		Set<Contact> expectedContacts = new HashSet<Contact>();
+		expectedContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		expectedContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		expectedContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));
+		Calendar expectedDate = new GregorianCalendar(2015, 8, 14, 11, 2);
+		int actualMtgId = cm.addFutureMeeting(expectedContacts, expectedDate);
+		assertEquals(1, actualMtgId);
 		FutureMeeting actual = cm.getFutureMeeting(1);
-		assertEquals(kMtgContacts, actual.getContacts());
-		assertEquals(kMtgDate, actual.getDate());
+		assertEquals(expectedContacts, actual.getContacts());
+		assertEquals(expectedDate, actual.getDate());
 	}
 	
 	//add and get back first past meeting - initial elements
@@ -236,50 +240,79 @@ public class ContactManagerTest {
 		cm.addNewContact("Anna Jones", "aj notes");
 		cm.addNewContact("Brian Jones", "bj notes");
 		cm.addNewContact("Cathy Jones", "cj notes");
-		Set<Contact> jMtgContacts = new HashSet<Contact>();
-		jMtgContacts.add(new ContactImpl(1, "Anna Jones", "aj notes"));
-		jMtgContacts.add(new ContactImpl(2, "Brian Jones", "bj notes"));
-		jMtgContacts.add(new ContactImpl(3, "Cathy Jones", "cj notes"));
-		Calendar jMtgDate = new GregorianCalendar(2014, 8, 15, 11, 2);
-		cm.addNewPastMeeting(jMtgContacts, jMtgDate, "New Past Meeting Notes");
+		Set<Contact> expectedContacts = new HashSet<Contact>();
+		expectedContacts.add(new ContactImpl(1, "Anna Jones", "aj notes"));
+		expectedContacts.add(new ContactImpl(2, "Brian Jones", "bj notes"));
+		expectedContacts.add(new ContactImpl(3, "Cathy Jones", "cj notes"));
+		Calendar expectedDate = new GregorianCalendar(2014, 8, 15, 11, 2);
+		cm.addNewPastMeeting(expectedContacts, expectedDate, "New Past Meeting Notes");
 		PastMeeting actual = cm.getPastMeeting(1);
-		assertEquals(jMtgContacts, actual.getContacts());
-		assertEquals(jMtgDate, actual.getDate());
+		assertEquals(expectedContacts, actual.getContacts());
+		assertEquals(expectedDate, actual.getDate());
 		assertEquals("New Past Meeting Notes", actual.getNotes());
 	}
 
 	//uses helper method to add contacts and meetings and checks type of the three
 	//different getMeeting(id) methods - i.e. Meeting, FutureMeeting & PastMeeting.
-	
+
 	@Test
-	public void testGettingBackDifferentTypesOfMeetingsUsingHelperMethodInTest() {
+	public void testGetFutureMtgAsFutureMtgUsingHelperMethodToAddContacts() {
 		ContactManager cm = new ContactManagerImpl();
 		helpAddContactsAndMeetings(cm);
-		Set<Contact> kMtgContacts = cm.getContacts("Kingsbury");
-		Calendar kMtgDate = new GregorianCalendar(2015, 8, 14, 11, 2);
-		Set<Contact> jMtgContacts = cm.getContacts("Jones");
-		Calendar jMtgDate = new GregorianCalendar(2014, 8, 15, 11, 2);
-		//get back the future mtg as a future mtg
-		FutureMeeting kFMActual = cm.getFutureMeeting(1);
-		assertEquals(kMtgContacts, kFMActual.getContacts());
-		assertEquals(kMtgDate, kFMActual.getDate());
-		//get back the past mtg as a past mtg
-		PastMeeting jPMActual = cm.getPastMeeting(2);
-		assertEquals(jMtgContacts, jPMActual.getContacts());
-		assertEquals(jMtgDate, jPMActual.getDate());
-		assertEquals("New Past Meeting Notes", jPMActual.getNotes());
-		//get back the future mtg as a mtg
-		Meeting kActual = cm.getMeeting(1);
-		assertEquals(kMtgContacts, kActual.getContacts());
-		assertEquals(kMtgDate, kActual.getDate());
-		//get back the past mtg as a mtg
-		Meeting jActual = cm.getMeeting(2);
-		assertEquals(jMtgContacts, jActual.getContacts());
-		assertEquals(jMtgDate, jActual.getDate());
-		PastMeeting jCastPastMeetingActual = (PastMeeting) cm.getMeeting(2);
-		assertEquals("New Past Meeting Notes", jCastPastMeetingActual.getNotes());
+		Set<Contact> expectedContacts = cm.getContacts("Kingsbury");
+		Calendar expectedDate = new GregorianCalendar(2015, 8, 14, 11, 2);
+		FutureMeeting actual = cm.getFutureMeeting(1);
+		assertEquals(expectedContacts, actual.getContacts());
+		assertEquals(expectedDate, actual.getDate());
 	}
 	
+	@Test
+	public void testGetPastMtgAsPastMtg() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Set<Contact> expectedContacts = cm.getContacts("Jones");
+		Calendar expectedDate = new GregorianCalendar(2014, 8, 15, 11, 2);
+		PastMeeting actual = cm.getPastMeeting(2);
+		assertEquals(expectedContacts, actual.getContacts());
+		assertEquals(expectedDate, actual.getDate());
+		assertEquals("New Past Meeting Notes", actual.getNotes());
+	}	
+	
+	@Test
+	public void testGetFutureMtgAsMtg() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Set<Contact> expectedContacts = cm.getContacts("Kingsbury");
+		Calendar expectedDate = new GregorianCalendar(2015, 8, 14, 11, 2);
+		Meeting actual = cm.getMeeting(1);
+		assertEquals(expectedContacts, actual.getContacts());
+		assertEquals(expectedDate, actual.getDate());
+	}
+	
+	@Test
+	public void testGetPastMtgAsMtg() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Set<Contact> expectedContacts = cm.getContacts("Jones");
+		Calendar expectedDate = new GregorianCalendar(2014, 8, 15, 11, 2);
+		Meeting actual = cm.getMeeting(2);
+		assertEquals(expectedContacts, actual.getContacts());
+		assertEquals(expectedDate, actual.getDate());
+		PastMeeting castActual = (PastMeeting) cm.getMeeting(2);
+		assertEquals("New Past Meeting Notes", castActual.getNotes());
+	}	
+	
+	@Test
+	public void testAddMeetingNotesConvertsFutureMtgToPastMtg() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		cm.addMeetingNotes(1, "Adding Meeting Notes to Meeting One");
+		Set<Contact> expectedContacts = cm.getContacts("Kingsbury");
+		Calendar expectedDate = new GregorianCalendar(2015, 8, 14, 11, 2);
+		PastMeeting actual = cm.getPastMeeting(1);
+		assertEquals(expectedContacts, actual.getContacts());
+		assertEquals(expectedDate, actual.getDate());
+	}
 }
 
 
