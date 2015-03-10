@@ -43,6 +43,9 @@ public class ContactManagerImpl implements ContactManager {
 	
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
+		if(contacts == null || date == null) {
+			throw new NullPointerException("AddFutureMeeting arguments may not be null");
+		}
 		LocalDateTime mtgDate = convertDateFormat(date);
 		if (mtgDate.isBefore(getNow())) {
 			throw new IllegalArgumentException("Date is in the past");
