@@ -336,6 +336,84 @@ public class ContactManagerTest {
 		cm.addFutureMeeting(contactsWithAnUnknown, date);
 	}
 	
+	@Test
+	public void testAddFutureMeetingExceptionWhenContactNotKnownAndNoneinCM() {
+		ContactManager cm = new ContactManagerImpl();
+		Set<Contact> contactsWithAnUnknown = new HashSet<Contact>();
+		contactsWithAnUnknown.add(new ContactImpl(2, "Elvis", "smooth notes"));
+		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Contact unknown");
+		cm.addFutureMeeting(contactsWithAnUnknown, date);
+	}
+	
+	@Test
+	public void testAddFutureMeetingExceptionWhenSetOfContactsEmpty() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		Set<Contact> emptyContactSet = new HashSet<Contact>();
+		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Contact Set Empty");
+		cm.addFutureMeeting(emptyContactSet, date);
+	}
+	@Test
+	public void testAddFutureMeetingExceptionWhenSetOfContactsEmptyAndNoneInCM() {
+		ContactManager cm = new ContactManagerImpl();
+		Set<Contact> emptyContactSet = new HashSet<Contact>();
+		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Contact Set Empty");
+		cm.addFutureMeeting(emptyContactSet, date);
+	}	
+	
+	//exception handling on addNewPastMeeting
+	
+	@Test
+	public void testAddNewPastMeetingExceptionWhenSetOfContactsContainsAnUnknown() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		Set<Contact> contactsWithAnUnknown = new HashSet<Contact>();
+		contactsWithAnUnknown.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		contactsWithAnUnknown.add(new ContactImpl(2, "Elvis", "smooth notes"));
+		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Contact unknown");
+		cm.addNewPastMeeting(contactsWithAnUnknown, date, "notes on new past meeting");
+	}
+	
+	@Test
+	public void testAddNewPastMeetingExceptionWhenSetOfContactsContainsAnUnknownAndCMEmpty() {
+		ContactManager cm = new ContactManagerImpl();
+		Set<Contact> contactsWithAnUnknown = new HashSet<Contact>();
+		contactsWithAnUnknown.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		contactsWithAnUnknown.add(new ContactImpl(2, "Elvis", "smooth notes"));
+		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Contact unknown");
+		cm.addNewPastMeeting(contactsWithAnUnknown, date, "notes on new past meeting");
+	}
+	
+	@Test
+	public void testNewPastMeetingExceptionWhenSetOfContactsEmpty() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		Set<Contact> emptyContactSet = new HashSet<Contact>();
+		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Contact Set Empty");
+		cm.addNewPastMeeting(emptyContactSet, date, "notes");
+	}
+	@Test
+	public void testAddNewPastMeetingExceptionWhenSetOfContactsEmptyAndNoneInCM() {
+		ContactManager cm = new ContactManagerImpl();
+		Set<Contact> emptyContactSet = new HashSet<Contact>();
+		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Contact Set Empty");
+		cm.addNewPastMeeting(emptyContactSet, date, "notes");
+	}
+	
 	
 	// TODO: this test ignored for now (need to have Contacts.txt in place before can run).
 	@Ignore @Test
