@@ -1,5 +1,7 @@
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
@@ -8,11 +10,14 @@ public class ContactManagerImpl implements ContactManager {
 
 	private Set<Contact> contacts;
 	private Set<Meeting> meetings;
-	int countContacts;
-	int countMeetings;
-	LocalDateTime clock;
-	long daysToAddToClockForTesting;
+	private int countContacts;
+	private int countMeetings;
+	private long daysToAddToClockForTesting;
 	
+	/**
+	 * Normal, in use, constructor. Time will be as 'real world'.
+	 * Only use other constructor for special testing requiring 'fake' future scenarios.
+	 */	
 	
 	public ContactManagerImpl() {
 		this.contacts = new HashSet<Contact>();
@@ -20,23 +25,28 @@ public class ContactManagerImpl implements ContactManager {
 		this.countContacts = 0;
 		this.countMeetings = 0;
 		this.daysToAddToClockForTesting = 0;
-		updateClock(); 
-		System.out.println("The date/time is: " + clock);
 	}
 
-	// to allow testing where the contact manager thinks time is in the future
+	/**
+	 * Special time adjusting constructor to allow testing where the contact manager calculates
+	 * time is in the future number of days added.
+	 * 
+	 * @param daysToAddToClockForTesting
+	 */
 	public ContactManagerImpl(long daysToAddToClockForTesting) {
 		this.contacts = new HashSet<Contact>();
 		this.meetings = new HashSet<Meeting>();
 		this.countContacts = 0;
 		this.countMeetings = 0;
 		this.daysToAddToClockForTesting = daysToAddToClockForTesting;
-		updateClock();
-		System.out.println("Time changed!  It is: " + clock);
 	}
 	
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
+		LocalDateTime mtgDate = convertDateFormat(date);
+		if (mtgDate.isBefore(getNow())) {
+			throw new IllegalArgumentException("Date is in the past");
+		}
 		countMeetings++;
 		int meetingId = countMeetings;
 		meetings.add(new FutureMeetingImpl(meetingId, contacts, date));
@@ -165,11 +175,21 @@ public class ContactManagerImpl implements ContactManager {
 	}
 
 	/**
-	 * Updates Contact Managers clock (date & time) by number of days specified
-	 * for this instance of Contact Manager.  Usually does nothing, only used
-	 * for testing functionality under future dates.
+	 * Returns DateTime of Contact Manager's clock (date & time).
+	 * Adjusted 'now' by number of days specified for this instance 
+	 * of Contact Manager.  In normal use there will be zero adjustment.
+	 * Adjustment is only used for testing functionality under future dates.
+	 *
+	 *@return LocalDateTime now (according to current instance of ContactManager)
 	 */
-	private void updateClock() {
-		clock = LocalDateTime.now().plusDays(daysToAddToClockForTesting);
+	private LocalDateTime getNow() {
+		return LocalDateTime.now().plusDays(daysToAddToClockForTesting);
 	}	
+	
+	private LocalDateTime convertDateFormat(Calendar date) {
+		GregorianCalendar gcDate = (GregorianCalendar) date;
+		ZonedDateTime zdtDate = gcDate.toZonedDateTime();
+		return zdtDate.toLocalDateTime();
+	}
+	
 }

@@ -311,7 +311,7 @@ public class ContactManagerTest {
 	
 	//exception handling on addFutureMeeting
 	
-	@Test// (expected = IllegalArgumentException.class)
+	@Test
 	public void testAddFutureMeetingDateNotInPast() {
 		ContactManager cm = new ContactManagerImpl();
 		cm.addNewContact("Anna Kingsbury", "ak notes");
@@ -319,7 +319,7 @@ public class ContactManagerTest {
 		expectedContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
 		Calendar pastDate = new GregorianCalendar(1999, 8, 14, 11, 2);
 		thrown.expect(IllegalArgumentException.class);
-		thrown.expectMessage("Date of future meeting may not be in the past");
+		thrown.expectMessage("Date is in the past");
 		cm.addFutureMeeting(expectedContacts, pastDate);
 	}
 	
