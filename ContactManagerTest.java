@@ -423,7 +423,7 @@ public class ContactManagerTest {
 		Set<Contact> nullContactSet = null; 
 		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
 		thrown.expect(NullPointerException.class);
-		thrown.expectMessage("NewPastMeeting parameter was null");
+		thrown.expectMessage("NewPastMeeting arguments may not be null");
 		cm.addNewPastMeeting(nullContactSet, date, "notes");
 	}
 	
@@ -435,7 +435,7 @@ public class ContactManagerTest {
 		contacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
 		Calendar date = null;
 		thrown.expect(NullPointerException.class);
-		thrown.expectMessage("NewPastMeeting parameter was null");
+		thrown.expectMessage("NewPastMeeting arguments may not be null");
 		cm.addNewPastMeeting(contacts, date, "notes");
 	}
 	
@@ -447,7 +447,7 @@ public class ContactManagerTest {
 		contacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
 		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
 		thrown.expect(NullPointerException.class);
-		thrown.expectMessage("NewPastMeeting parameter was null");
+		thrown.expectMessage("NewPastMeeting arguments may not be null");
 		cm.addNewPastMeeting(contacts, date, null);
 	}
 	

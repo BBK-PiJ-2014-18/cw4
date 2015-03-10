@@ -105,6 +105,9 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public void addNewPastMeeting(Set<Contact> contacts, Calendar date,
 			String text) {
+		if (contacts == null || date == null || text == null) {
+			throw new NullPointerException("NewPastMeeting arguments may not be null");
+		}
 		checkContacts(contacts);
 		countMeetings++;
 		int meetingId = countMeetings;
