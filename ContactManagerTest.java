@@ -7,9 +7,15 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 public class ContactManagerTest {
 
+	
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+	
 	public void helpAddContactsAndMeetings(ContactManager cm) {
 		cm.addNewContact("Anna Kingsbury", "ak notes");
 		cm.addNewContact("Brian Kingsbury", "bk notes");
@@ -280,7 +286,7 @@ public class ContactManagerTest {
 	}	
 	
 	@Test
-	public void testGeTMtgAsMtgOnFutureMeeting() {
+	public void testGetMtgAsMtgOnFutureMeeting() {
 		ContactManager cm = new ContactManagerImpl();
 		helpAddContactsAndMeetings(cm);
 		Set<Contact> expectedContacts = cm.getContacts("Kingsbury");
@@ -301,7 +307,22 @@ public class ContactManagerTest {
 		assertEquals(expectedDate, actual.getDate());
 		PastMeeting castActual = (PastMeeting) cm.getMeeting(2);
 		assertEquals("New Past Meeting Notes", castActual.getNotes());
-	}	
+	}
+	
+	//exception handling on addFutureMeeting
+	
+	@Test// (expected = IllegalArgumentException.class)
+	public void testAddFutureMeetingDateNotInPast() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		Set<Contact> expectedContacts = new HashSet<Contact>();
+		expectedContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		Calendar pastDate = new GregorianCalendar(1999, 8, 14, 11, 2);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Date of future meeting may not be in the past");
+		cm.addFutureMeeting(expectedContacts, pastDate);
+	}
+	
 	
 	// TODO: this test ignored for now (need to have Contacts.txt in place before can run).
 	@Ignore @Test
