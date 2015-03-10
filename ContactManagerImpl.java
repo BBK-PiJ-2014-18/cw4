@@ -1,8 +1,8 @@
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
-
 
 public class ContactManagerImpl implements ContactManager {
 
@@ -10,14 +10,30 @@ public class ContactManagerImpl implements ContactManager {
 	private Set<Meeting> meetings;
 	int countContacts;
 	int countMeetings;
+	LocalDateTime clock;
+	long daysToAddToClockForTesting;
+	
 	
 	public ContactManagerImpl() {
 		this.contacts = new HashSet<Contact>();
 		this.meetings = new HashSet<Meeting>();
 		this.countContacts = 0;
 		this.countMeetings = 0;
+		this.daysToAddToClockForTesting = 0;
+		updateClock(); 
+		System.out.println("The date/time is: " + clock);
 	}
-	
+
+	// to allow testing where the contact manager thinks time is in the future
+	public ContactManagerImpl(long daysToAddToClockForTesting) {
+		this.contacts = new HashSet<Contact>();
+		this.meetings = new HashSet<Meeting>();
+		this.countContacts = 0;
+		this.countMeetings = 0;
+		this.daysToAddToClockForTesting = daysToAddToClockForTesting;
+		updateClock();
+		System.out.println("Time changed!  It is: " + clock);
+	}
 	
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
@@ -85,8 +101,9 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public void addMeetingNotes(int id, String text) {
-		// TODO Auto-generated method stub
-
+		Meeting mtg = getMeeting(id);
+		meetings.remove(mtg);
+		meetings.add(new PastMeetingImpl(id, mtg.getContacts(), mtg.getDate(), text));
 	}
 
 	@Override
@@ -147,4 +164,12 @@ public class ContactManagerImpl implements ContactManager {
 
 	}
 
+	/**
+	 * Updates Contact Managers clock (date & time) by number of days specified
+	 * for this instance of Contact Manager.  Usually does nothing, only used
+	 * for testing functionality under future dates.
+	 */
+	private void updateClock() {
+		clock = LocalDateTime.now().plusDays(daysToAddToClockForTesting);
+	}	
 }
