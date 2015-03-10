@@ -47,7 +47,7 @@ public class ContactManagerImpl implements ContactManager {
 		if (mtgDate.isBefore(getNow())) {
 			throw new IllegalArgumentException("Date is in the past");
 		}
-		checkAllContactsKnown(contacts);
+		checkContacts(contacts);
 		countMeetings++;
 		int meetingId = countMeetings;
 		meetings.add(new FutureMeetingImpl(meetingId, contacts, date));
@@ -105,6 +105,7 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public void addNewPastMeeting(Set<Contact> contacts, Calendar date,
 			String text) {
+		checkContacts(contacts);
 		countMeetings++;
 		int meetingId = countMeetings;
 		meetings.add(new PastMeetingImpl(meetingId, contacts, date, text));
@@ -193,7 +194,11 @@ public class ContactManagerImpl implements ContactManager {
 		return zdtDate.toLocalDateTime();
 	}
 	
-	private void checkAllContactsKnown(Set<Contact> contacts) {
+	private void checkContacts(Set<Contact> contacts) {
+		if(contacts.size() == 0) {
+			throw new IllegalArgumentException("Contact Set Empty");
+		}
+		
 		if(!this.contacts.containsAll(contacts)) {
 			throw new IllegalArgumentException("Contact unknown");
 		}
