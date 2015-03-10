@@ -47,6 +47,7 @@ public class ContactManagerImpl implements ContactManager {
 		if (mtgDate.isBefore(getNow())) {
 			throw new IllegalArgumentException("Date is in the past");
 		}
+		checkAllContactsKnown(contacts);
 		countMeetings++;
 		int meetingId = countMeetings;
 		meetings.add(new FutureMeetingImpl(meetingId, contacts, date));
@@ -191,5 +192,14 @@ public class ContactManagerImpl implements ContactManager {
 		ZonedDateTime zdtDate = gcDate.toZonedDateTime();
 		return zdtDate.toLocalDateTime();
 	}
+	
+	private void checkAllContactsKnown(Set<Contact> contacts) {
+		if(!this.contacts.containsAll(contacts)) {
+			throw new IllegalArgumentException("Contact unknown");
+		}
+	}
+	
+	
+	
 	
 }
