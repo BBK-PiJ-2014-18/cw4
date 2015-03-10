@@ -404,6 +404,7 @@ public class ContactManagerTest {
 		thrown.expectMessage("Contact Set Empty");
 		cm.addNewPastMeeting(emptyContactSet, date, "notes");
 	}
+	
 	@Test
 	public void testAddNewPastMeetingExceptionWhenSetOfContactsEmptyAndNoneInCM() {
 		ContactManager cm = new ContactManagerImpl();
@@ -413,6 +414,43 @@ public class ContactManagerTest {
 		thrown.expectMessage("Contact Set Empty");
 		cm.addNewPastMeeting(emptyContactSet, date, "notes");
 	}
+	
+	//TODO: these nullpointer tests are not required for addFutureMtg?
+	
+	@Test
+	public void testAddNewPastMeetingExceptionOnContactsNull() {
+		ContactManager cm = new ContactManagerImpl();
+		Set<Contact> nullContactSet = null; 
+		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		thrown.expect(NullPointerException.class);
+		thrown.expectMessage("NewPastMeeting parameter was null");
+		cm.addNewPastMeeting(nullContactSet, date, "notes");
+	}
+	
+	@Test
+	public void testAddNewPastMeetingExceptionOnDateNull() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		Set<Contact> contacts =  new HashSet<Contact>();
+		contacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		Calendar date = null;
+		thrown.expect(NullPointerException.class);
+		thrown.expectMessage("NewPastMeeting parameter was null");
+		cm.addNewPastMeeting(contacts, date, "notes");
+	}
+	
+	@Test
+	public void testAddNewPastMeetingExceptionOnNotesNull() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		Set<Contact> contacts =  new HashSet<Contact>();
+		contacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		thrown.expect(NullPointerException.class);
+		thrown.expectMessage("NewPastMeeting parameter was null");
+		cm.addNewPastMeeting(contacts, date, null);
+	}
+	
 	
 	
 	// TODO: this test ignored for now (need to have Contacts.txt in place before can run).
