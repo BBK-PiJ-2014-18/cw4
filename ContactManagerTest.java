@@ -312,7 +312,7 @@ public class ContactManagerTest {
 	//exception handling on addFutureMeeting
 	
 	@Test
-	public void testAddFutureMeetingDateNotInPast() {
+	public void testAddFutureMeetingExceptionWhenDateInPast() {
 		ContactManager cm = new ContactManagerImpl();
 		cm.addNewContact("Anna Kingsbury", "ak notes");
 		Set<Contact> expectedContacts = new HashSet<Contact>();
@@ -321,6 +321,19 @@ public class ContactManagerTest {
 		thrown.expect(IllegalArgumentException.class);
 		thrown.expectMessage("Date is in the past");
 		cm.addFutureMeeting(expectedContacts, pastDate);
+	}
+	
+	@Test
+	public void testAddFutureMeetingExceptionWhenContactNotKnown() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		Set<Contact> contactsWithAnUnknown = new HashSet<Contact>();
+		contactsWithAnUnknown.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		contactsWithAnUnknown.add(new ContactImpl(2, "Elvis", "smooth notes"));
+		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Contact unknown");
+		cm.addFutureMeeting(contactsWithAnUnknown, date);
 	}
 	
 	
