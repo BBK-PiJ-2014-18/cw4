@@ -61,6 +61,9 @@ public class ContactManagerImpl implements ContactManager {
 	public PastMeeting getPastMeeting(int id) {
 		for(Meeting mtg: meetings) {
 			if (mtg.getId() == id) {
+				if (mtg instanceof FutureMeeting){
+					throw new IllegalArgumentException("Meeting with that ID is a FutureMeeting");
+				}				
 				return (PastMeeting) mtg;
 			}
 		}
@@ -71,6 +74,9 @@ public class ContactManagerImpl implements ContactManager {
 	public FutureMeeting getFutureMeeting(int id) {
 		for(Meeting mtg: meetings) {
 			if (mtg.getId() == id) {
+				if (mtg instanceof PastMeeting){
+					throw new IllegalArgumentException("Meeting with that ID is a PastMeeting");
+				}
 				return (FutureMeeting) mtg;
 			}
 		}
