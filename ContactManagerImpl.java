@@ -2,9 +2,12 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class ContactManagerImpl implements ContactManager {
 
@@ -101,8 +104,21 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public List<Meeting> getFutureMeetingList(Calendar date) {
-		// TODO Auto-generated method stub
-		return null;
+		SortedSet<Meeting> result = new TreeSet<Meeting>();
+		for (Meeting mtg: meetings) {
+			if(mtg.getDate().get(Calendar.YEAR) == date.get(Calendar.YEAR)
+					&& mtg.getDate().get(Calendar.MONTH) == date.get(Calendar.MONTH)
+					&& mtg.getDate().get(Calendar.DAY_OF_MONTH) == date.get(Calendar.DAY_OF_MONTH)) {
+				System.out.println("add " + mtg.getDate().get(Calendar.HOUR_OF_DAY));
+				result.add(mtg);
+			}	
+		}
+		List<Meeting> result2 = new LinkedList<Meeting>();
+		result2.addAll(result);
+		for(Meeting mtg: result) {
+			System.out.println("> " + mtg.getDate().get(Calendar.HOUR_OF_DAY));
+		}
+		return result2;
 	}
 
 	@Override

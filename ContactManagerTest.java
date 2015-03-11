@@ -43,9 +43,9 @@ public class ContactManagerTest {
 		Set<Contact> aMtgContacts = cm.getContacts(1,4);
 		Set<Contact> bMtgContacts = cm.getContacts(2,5);
 		Set<Contact> cMtgContacts = cm.getContacts(3,6);
-		Calendar aMtgDate = new GregorianCalendar(2015, 8, 14, 00, 2);
-		Calendar bMtgDate = new GregorianCalendar(2015, 8, 14, 10, 0);
-		Calendar cMtgDate = new GregorianCalendar(2015, 8, 14, 23, 59);
+		Calendar aMtgDate = new GregorianCalendar(2015, 8, 13, 00, 2);
+		Calendar bMtgDate = new GregorianCalendar(2015, 8, 13, 10, 0);
+		Calendar cMtgDate = new GregorianCalendar(2015, 8, 13, 23, 59);
 		cm.addFutureMeeting(aMtgContacts, aMtgDate);
 		cm.addFutureMeeting(bMtgContacts, bMtgDate);
 		cm.addFutureMeeting(cMtgContacts, cMtgDate);
@@ -566,7 +566,7 @@ public class ContactManagerTest {
 		firstContacts.add(new ContactImpl(4, "Anna Jones", "aj notes"));
 		secondContacts.add(new ContactImpl(5, "Brian Jones", "bj notes"));
 		thirdContacts.add(new ContactImpl(6, "Cathy Jones", "cj notes"));
-		Calendar testDate = new GregorianCalendar(2015, 8, 14);
+		Calendar testDate = new GregorianCalendar(2015, 8, 13);
 		List<Meeting> actual = cm.getFutureMeetingList(testDate);
 		assertEquals(3, actual.size());
 		assertEquals(firstContacts, actual.get(0).getContacts());

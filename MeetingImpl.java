@@ -2,7 +2,7 @@ import java.util.Calendar;
 import java.util.Set;
 
 
-public class MeetingImpl implements Meeting {
+public class MeetingImpl implements Meeting, Comparable<Meeting> {
 
 	private int meetingId;
 	private Calendar scheduledDate;
@@ -29,4 +29,11 @@ public class MeetingImpl implements Meeting {
 		return meetingContacts;
 	}
 
+	@Override
+	public int compareTo(Meeting other) {
+		if (this.scheduledDate.before(other.getDate())) {
+			return -1;
+		}
+		return 1;
+	}
 }

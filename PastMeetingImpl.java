@@ -2,7 +2,7 @@ import java.util.Calendar;
 import java.util.Set;
 
 
-public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
+public class PastMeetingImpl extends MeetingImpl implements PastMeeting{
 
 	private String meetingNotes;
 	
@@ -17,4 +17,7 @@ public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
 		return meetingNotes;
 	}
 
+
+	
+	
 }
