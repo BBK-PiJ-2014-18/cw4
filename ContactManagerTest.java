@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNull;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -37,6 +38,19 @@ public class ContactManagerTest {
 		Calendar jMtgDate = new GregorianCalendar(2014, 8, 15, 11, 2);
 		cm.addNewPastMeeting(jMtgContacts, jMtgDate, "New Past Meeting Notes");
 	}
+	
+	public void helpAddMoreFutureMeetings(ContactManager cm) {
+		Set<Contact> aMtgContacts = cm.getContacts(1,4);
+		Set<Contact> bMtgContacts = cm.getContacts(2,5);
+		Set<Contact> cMtgContacts = cm.getContacts(3,6);
+		Calendar aMtgDate = new GregorianCalendar(2015, 8, 14, 00, 2);
+		Calendar bMtgDate = new GregorianCalendar(2015, 8, 14, 10, 0);
+		Calendar cMtgDate = new GregorianCalendar(2015, 8, 14, 23, 59);
+		cm.addFutureMeeting(aMtgContacts, aMtgDate);
+		cm.addFutureMeeting(bMtgContacts, bMtgDate);
+		cm.addFutureMeeting(cMtgContacts, cMtgDate);
+	}
+	
 		
 	//CONTACT TESTS START HERE
 	
@@ -491,7 +505,6 @@ public class ContactManagerTest {
 		cm.addNewPastMeeting(emptyContactSet, date, "notes");
 	}
 	
-	
 	@Test
 	public void testAddNewPastMeetingExceptionOnContactsNull() {
 		ContactManager cm = new ContactManagerImpl();
@@ -527,6 +540,44 @@ public class ContactManagerTest {
 	}
 	
 
+	//tests for getFutureMeetingDate(Calendar)
+	
+	@Test
+	public void testFutureMeetingDateReturnsEmptyListWhenNoMthsOnThatDate() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Calendar noMtgsDate = new GregorianCalendar(2015, 8, 13, 11, 2);
+		List<Meeting> actual = cm.getFutureMeetingList(noMtgsDate);	
+		assertEquals(0, actual.size());
+	}
+	
+	@Test
+	public void testFutureMeetingDateReturnsSortedListForADate() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		helpAddMoreFutureMeetings(cm);
+		
+		Set<Contact> firstContacts = new HashSet<Contact>();
+		Set<Contact> secondContacts = new HashSet<Contact>();
+		Set<Contact> thirdContacts = new HashSet<Contact>();
+		firstContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		secondContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		thirdContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));		
+		firstContacts.add(new ContactImpl(4, "Anna Jones", "aj notes"));
+		secondContacts.add(new ContactImpl(5, "Brian Jones", "bj notes"));
+		thirdContacts.add(new ContactImpl(6, "Cathy Jones", "cj notes"));
+		Calendar testDate = new GregorianCalendar(2015, 8, 14);
+		List<Meeting> actual = cm.getFutureMeetingList(testDate);
+		assertEquals(3, actual.size());
+		assertEquals(firstContacts, actual.get(0).getContacts());
+		assertEquals(secondContacts, actual.get(1).getContacts());
+		assertEquals(thirdContacts, actual.get(2).getContacts());
+	}
+	
+	
+	
+	
+	
 	// tests for AddMeetingNotes
 
 	// TODO: this test ignored for now (need to have Contacts.txt in place before can run).
