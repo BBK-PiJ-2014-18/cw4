@@ -12,7 +12,7 @@ import java.util.TreeSet;
 public class ContactManagerImpl implements ContactManager {
 
 	private Set<Contact> contacts;
-	private Set<Meeting> meetings;
+	private SortedSet<Meeting> meetings;
 	private int countContacts;
 	private int countMeetings;
 	private long daysToAddToClockForTesting;
@@ -24,7 +24,7 @@ public class ContactManagerImpl implements ContactManager {
 	
 	public ContactManagerImpl() {
 		this.contacts = new HashSet<Contact>();
-		this.meetings = new HashSet<Meeting>();
+		this.meetings = new TreeSet<Meeting>();
 		this.countContacts = 0;
 		this.countMeetings = 0;
 		this.daysToAddToClockForTesting = 0;
@@ -38,7 +38,7 @@ public class ContactManagerImpl implements ContactManager {
 	 */
 	public ContactManagerImpl(long daysToAddToClockForTesting) {
 		this.contacts = new HashSet<Contact>();
-		this.meetings = new HashSet<Meeting>();
+		this.meetings = new TreeSet<Meeting>();
 		this.countContacts = 0;
 		this.countMeetings = 0;
 		this.daysToAddToClockForTesting = daysToAddToClockForTesting;
@@ -104,21 +104,15 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public List<Meeting> getFutureMeetingList(Calendar date) {
-		SortedSet<Meeting> result = new TreeSet<Meeting>();
+		List<Meeting> result = new LinkedList<Meeting>();
 		for (Meeting mtg: meetings) {
 			if(mtg.getDate().get(Calendar.YEAR) == date.get(Calendar.YEAR)
 					&& mtg.getDate().get(Calendar.MONTH) == date.get(Calendar.MONTH)
 					&& mtg.getDate().get(Calendar.DAY_OF_MONTH) == date.get(Calendar.DAY_OF_MONTH)) {
-				System.out.println("add " + mtg.getDate().get(Calendar.HOUR_OF_DAY));
 				result.add(mtg);
 			}	
 		}
-		List<Meeting> result2 = new LinkedList<Meeting>();
-		result2.addAll(result);
-		for(Meeting mtg: result) {
-			System.out.println("> " + mtg.getDate().get(Calendar.HOUR_OF_DAY));
-		}
-		return result2;
+		return result;
 	}
 
 	@Override
@@ -201,7 +195,6 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public void flush() {
 		// TODO Auto-generated method stub
-
 	}
 
 	/**
@@ -231,8 +224,4 @@ public class ContactManagerImpl implements ContactManager {
 			throw new IllegalArgumentException("Contact unknown");
 		}
 	}
-	
-	
-	
-	
 }

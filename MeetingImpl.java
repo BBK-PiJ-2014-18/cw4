@@ -31,6 +31,7 @@ public class MeetingImpl implements Meeting, Comparable<Meeting> {
 
 	@Override
 	public int compareTo(Meeting other) {
+		//will need to test & fix for same datetime
 		if (this.scheduledDate.before(other.getDate())) {
 			return -1;
 		}
