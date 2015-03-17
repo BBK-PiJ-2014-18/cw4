@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -14,6 +15,9 @@ import org.junit.rules.ExpectedException;
 
 public class ContactManagerTest {
 
+
+	
+	
 	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -51,7 +55,49 @@ public class ContactManagerTest {
 		cm.addFutureMeeting(cMtgContacts, cMtgDate);
 	}
 	
+	public void helpAddMorePastMeetings(ContactManager cm) {
+		Set<Contact> aMtgContacts = cm.getContacts(1,4);
+		Set<Contact> bMtgContacts = cm.getContacts(2,5);
+		Set<Contact> cMtgContacts = cm.getContacts(3,6);
+		Calendar aMtgDate = new GregorianCalendar(2000, 8, 13, 00, 2);
+		Calendar bMtgDate = new GregorianCalendar(2000, 8, 13, 10, 0);
+		Calendar cMtgDate = new GregorianCalendar(2000, 8, 13, 23, 59);
+		cm.addNewPastMeeting(aMtgContacts, aMtgDate, "notes");
+		cm.addNewPastMeeting(bMtgContacts, bMtgDate, "notes");
+		cm.addNewPastMeeting(cMtgContacts, cMtgDate, "notes");
+	}
+	
+	public void helpAddTodayMeetings(ContactManager cm) {
+		Set<Contact> aMtgContacts = cm.getContacts(1,4);
+		Set<Contact> bMtgContacts = cm.getContacts(2,5);
+		Set<Contact> cMtgContacts = cm.getContacts(3,6);
+		Calendar today = new GregorianCalendar();
+		today = Calendar.getInstance();
+		Calendar aMtgDate = new GregorianCalendar(today.get(Calendar.YEAR), today.get(Calendar.MONTH), 
+				today.get(Calendar.DAY_OF_MONTH), 23, 59);
+		Calendar bMtgDate = new GregorianCalendar(today.get(Calendar.YEAR), today.get(Calendar.MONTH), 
+				today.get(Calendar.DAY_OF_MONTH), 10, 0);
+		Calendar cMtgDate = new GregorianCalendar(today.get(Calendar.YEAR), today.get(Calendar.MONTH), 
+				today.get(Calendar.DAY_OF_MONTH), 00, 01);
+		cm.addNewPastMeeting(aMtgContacts, aMtgDate, "notes");
+		cm.addNewPastMeeting(bMtgContacts, bMtgDate, "notes");
+		cm.addNewPastMeeting(cMtgContacts, cMtgDate, "notes");
+	}
 		
+	
+	public void helpAddMixedMeetings(ContactManager cm) {
+		Set<Contact> aMtgContacts = cm.getContacts(1,4);
+		Set<Contact> bMtgContacts = cm.getContacts(2,5);
+		Set<Contact> cMtgContacts = cm.getContacts(3,6);
+		Calendar aMtgDate = new GregorianCalendar(2015, 9, 13, 00, 2);
+		Calendar bMtgDate = new GregorianCalendar(2015, 9, 13, 10, 0);
+		Calendar cMtgDate = new GregorianCalendar(2015, 9, 13, 23, 59);
+		cm.addFutureMeeting(aMtgContacts, aMtgDate);
+		cm.addNewPastMeeting(bMtgContacts, bMtgDate, "notes");
+		cm.addNewPastMeeting(cMtgContacts, cMtgDate, "notes");
+	}
+	
+	
 	//CONTACT TESTS START HERE
 	
 	//testing the basics of adding and getting back contacts
@@ -543,20 +589,19 @@ public class ContactManagerTest {
 	//tests for getFutureMeetingDate(Calendar)
 	
 	@Test
-	public void testFutureMeetingDateReturnsEmptyListWhenNoMthsOnThatDate() {
+	public void testFutureMeetingDateReturnsEmptyListWhenNoMeetingsOnThatDate() {
 		ContactManager cm = new ContactManagerImpl();
 		helpAddContactsAndMeetings(cm);
 		Calendar noMtgsDate = new GregorianCalendar(2015, 8, 13, 11, 2);
 		List<Meeting> actual = cm.getFutureMeetingList(noMtgsDate);	
 		assertEquals(0, actual.size());
 	}
-	
+
 	@Test
 	public void testFutureMeetingDateReturnsSortedListForADate() {
 		ContactManager cm = new ContactManagerImpl();
 		helpAddContactsAndMeetings(cm);
 		helpAddMoreFutureMeetings(cm);
-		
 		Set<Contact> firstContacts = new HashSet<Contact>();
 		Set<Contact> secondContacts = new HashSet<Contact>();
 		Set<Contact> thirdContacts = new HashSet<Contact>();
@@ -572,6 +617,101 @@ public class ContactManagerTest {
 		assertEquals(firstContacts, actual.get(0).getContacts());
 		assertEquals(secondContacts, actual.get(1).getContacts());
 		assertEquals(thirdContacts, actual.get(2).getContacts());
+	}
+	
+	@Test
+	public void testGetFutureMeetingListWithDayAndTimeJustWorksOnDay() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		helpAddMoreFutureMeetings(cm);
+		Set<Contact> firstContacts = new HashSet<Contact>();
+		Set<Contact> secondContacts = new HashSet<Contact>();
+		Set<Contact> thirdContacts = new HashSet<Contact>();
+		firstContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		secondContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		thirdContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));		
+		firstContacts.add(new ContactImpl(4, "Anna Jones", "aj notes"));
+		secondContacts.add(new ContactImpl(5, "Brian Jones", "bj notes"));
+		thirdContacts.add(new ContactImpl(6, "Cathy Jones", "cj notes"));
+		Calendar testDate = new GregorianCalendar(2015, 8, 13, 12, 12);
+		List<Meeting> actual = cm.getFutureMeetingList(testDate);
+		assertEquals(3, actual.size());
+		assertEquals(firstContacts, actual.get(0).getContacts());
+		assertEquals(secondContacts, actual.get(1).getContacts());
+		assertEquals(thirdContacts, actual.get(2).getContacts());
+	}
+	
+	@Test
+	public void testGetFutureMeetingListWithDateInPast() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		helpAddMoreFutureMeetings(cm);
+		helpAddMorePastMeetings(cm);
+		Set<Contact> firstContacts = new HashSet<Contact>();
+		Set<Contact> secondContacts = new HashSet<Contact>();
+		Set<Contact> thirdContacts = new HashSet<Contact>();
+		firstContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		secondContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		thirdContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));		
+		firstContacts.add(new ContactImpl(4, "Anna Jones", "aj notes"));
+		secondContacts.add(new ContactImpl(5, "Brian Jones", "bj notes"));
+		thirdContacts.add(new ContactImpl(6, "Cathy Jones", "cj notes"));
+		Calendar testDate = new GregorianCalendar(2000, 8, 13, 12, 12);
+		List<Meeting> actual = cm.getFutureMeetingList(testDate);
+		assertEquals(3, actual.size());
+		assertEquals(firstContacts, actual.get(0).getContacts());
+		assertEquals(secondContacts, actual.get(1).getContacts());
+		assertEquals(thirdContacts, actual.get(2).getContacts());
+	}
+	
+	@Test
+	public void testGetFutureMeetingListWithTodayDate() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		helpAddTodayMeetings(cm);
+		Set<Contact> firstContacts = new HashSet<Contact>();
+		Set<Contact> secondContacts = new HashSet<Contact>();
+		Set<Contact> thirdContacts = new HashSet<Contact>();
+		firstContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		secondContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		thirdContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));		
+		firstContacts.add(new ContactImpl(4, "Anna Jones", "aj notes"));
+		secondContacts.add(new ContactImpl(5, "Brian Jones", "bj notes"));
+		thirdContacts.add(new ContactImpl(6, "Cathy Jones", "cj notes"));
+		Calendar today = new GregorianCalendar();
+		today = Calendar.getInstance();
+		Calendar testDate = new GregorianCalendar(today.get(Calendar.YEAR), today.get(Calendar.MONTH), 
+				today.get(Calendar.DAY_OF_MONTH));
+		List<Meeting> actual = cm.getFutureMeetingList(testDate);
+		assertEquals(3, actual.size());
+		assertEquals(firstContacts, actual.get(2).getContacts());
+		assertEquals(secondContacts, actual.get(1).getContacts());
+		assertEquals(thirdContacts, actual.get(0).getContacts());
+	}
+	
+	@Test
+	public void testGetFutureMeetingListReturnsBothTypesOfMeeting() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		helpAddMixedMeetings(cm);
+		Set<Contact> firstContacts = new HashSet<Contact>();
+		Set<Contact> secondContacts = new HashSet<Contact>();
+		Set<Contact> thirdContacts = new HashSet<Contact>();
+		firstContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		secondContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		thirdContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));		
+		firstContacts.add(new ContactImpl(4, "Anna Jones", "aj notes"));
+		secondContacts.add(new ContactImpl(5, "Brian Jones", "bj notes"));
+		thirdContacts.add(new ContactImpl(6, "Cathy Jones", "cj notes"));
+		Calendar testDate = new GregorianCalendar(2015, 9, 13, 12, 12);
+		List<Meeting> actual = cm.getFutureMeetingList(testDate);
+		assertEquals(3, actual.size());
+		assertEquals(firstContacts, actual.get(0).getContacts());
+		assertEquals(secondContacts, actual.get(1).getContacts());
+		assertEquals(thirdContacts, actual.get(2).getContacts());
+		assertEquals(FutureMeetingImpl.class, actual.get(0).getClass());
+		assertEquals(PastMeetingImpl.class, actual.get(1).getClass());
+		assertEquals(PastMeetingImpl.class, actual.get(2).getClass());
 	}
 	
 	

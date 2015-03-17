@@ -96,12 +96,25 @@ public class ContactManagerImpl implements ContactManager {
 		return null;
 	}
 
+	/**
+	* Returns meetings that happen at a time in the future, they may be of the 
+	* type FutureMeeting or PastMeeting. 
+	*/	
+	
 	@Override
 	public List<Meeting> getFutureMeetingList(Contact contact) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/**
+	* Meetings that happen on this day may be of the type FutureMeeting
+	* or PastMeeting (the method returns meetings on the specified day 
+	* regardless of type). 
+	* 
+	* @throws IllegalArgumentException if date does not include a specific day.
+	*/	
+	
 	@Override
 	public List<Meeting> getFutureMeetingList(Calendar date) {
 		List<Meeting> result = new LinkedList<Meeting>();
@@ -115,6 +128,11 @@ public class ContactManagerImpl implements ContactManager {
 		return result;
 	}
 
+	/**
+	* Returned list includes meetings of the type PastMeeting, even if they happen on a future date. 
+	* List does not include meetings of the type FutureMeeting, even if they have a date in the past. 
+	*/
+	
 	@Override
 	public List<PastMeeting> getPastMeetingList(Contact contact) {
 		// TODO Auto-generated method stub
@@ -146,7 +164,7 @@ public class ContactManagerImpl implements ContactManager {
 			throw new NullPointerException("Name/Notes may not be null");
 		}
 		//as some methods search contacts by name do not allow empty string
-		//notes may be empty as not searched for (and we have feature to add later)
+		//notes may be empty string as not searched for (and we have feature to add later)
 		if(name == "") {
 			throw new IllegalArgumentException("Name may not be empty string"); 
 		}
