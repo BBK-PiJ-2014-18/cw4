@@ -1,3 +1,10 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Reader;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
@@ -11,6 +18,8 @@ import java.util.TreeSet;
 
 public class ContactManagerImpl implements ContactManager {
 
+	private static final String DATA_FILE_NAME = "./cw4/contacts.txt";
+	
 	private Set<Contact> contacts;
 	private SortedSet<Meeting> meetings;
 //	private int countContacts;
@@ -28,6 +37,7 @@ public class ContactManagerImpl implements ContactManager {
 //		this.countContacts = 0;
 		this.countMeetings = 0;
 		this.daysToAddToClockForTesting = 0;
+		loadRecords();
 	}
 
 	/**
@@ -42,6 +52,7 @@ public class ContactManagerImpl implements ContactManager {
 //		this.countContacts = 0;
 		this.countMeetings = 0;
 		this.daysToAddToClockForTesting = daysToAddToClockForTesting;
+		loadRecords();
 	}
 	
 	@Override
@@ -224,9 +235,113 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public void flush() {
-		// TODO Auto-generated method stub
+		PrintWriter out = null;
+		File file = new File(DATA_FILE_NAME);
+		try {
+			out = new PrintWriter(file);
+			//TEST FOR PUTTING SOMETHING OTHER THAN "contacts" BREAKS CHECK IN LOADRECORDS()
+			out.println("contacts");
+			for(Contact contact: contacts) {
+				out.println(contact.getId() + "," + contact.getName() + 
+						","+ contact.getNotes() + ",");
+			}
+			out.println("meetings");
+			
+			for(Meeting meeting: meetings) {
+				String dateStr = meeting.getDate().get(Calendar.YEAR) + ","
+						+ meeting.getDate().get(Calendar.MONTH) + ","
+						+ meeting.getDate().get(Calendar.DAY_OF_MONTH) + ","
+						+ meeting.getDate().get(Calendar.HOUR_OF_DAY) + ","
+						+ meeting.getDate().get(Calendar.MINUTE);
+				String str = meeting.getId() + "," + dateStr + ",";	
+				if (meeting instanceof PastMeeting){
+					PastMeeting pastMeeting = (PastMeeting) meeting;
+					str = str + pastMeeting.getNotes() + ",";
+				} else {
+					str = str + "" + ",";
+				}
+				for (Contact contact: meeting.getContacts()) {
+					//do this the cool way...
+					str = str + contact.getId() + ",";
+				};
+	
+				out.println(str);
+			}
+		} catch (FileNotFoundException ex) {
+			System.out.println("Cannot write to file " + file + ".");
+		} finally {
+			out.close();
+		}
 	}
-
+	
+	private void loadRecords() {
+		File file = new File(DATA_FILE_NAME);
+        if(!file.exists()) {
+        	return;	
+        }	
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader(new FileReader(file));
+			String line;
+			if(!(line = in.readLine()).equals("contacts")) {
+				// FIX THIS...
+				System.out.println("we have a problem - do something smarter here");
+			};
+			String[] contactToLoad;
+			while((line = in.readLine()) != null && !line.equals("meetings")) {
+				contactToLoad = line.split(",", -1);
+				int contactId = Integer.parseInt(contactToLoad[0]);
+//				countContacts++;
+				contacts.add(new ContactImpl(contactId, contactToLoad[1], contactToLoad[2]));
+//				contacts.add(new ContactImpl(contactToLoad[1], contactToLoad[2]));
+	//			}
+			}
+			String[] meetingToLoad;
+			while((line = in.readLine()) != null) {
+				meetingToLoad = line.split(",", -1);
+				int meetingId = Integer.parseInt(meetingToLoad[0]);
+				Calendar meetingDate = new GregorianCalendar(
+						Integer.parseInt(meetingToLoad[1]),
+						Integer.parseInt(meetingToLoad[2]),
+						Integer.parseInt(meetingToLoad[3]),
+						Integer.parseInt(meetingToLoad[4]),
+						Integer.parseInt(meetingToLoad[5]));
+				String meetingNotes = meetingToLoad[6];
+				int[] meetingContactIds = new int[meetingToLoad.length -8];
+				// 6 would make sense, 7 is a magic number - todo with the -1 in line.split(",", -1)
+				for(int i = 0; i < meetingToLoad.length - 8; i++) {
+					meetingContactIds[i] = Integer.parseInt(meetingToLoad[i+7]); 
+				}
+				Set<Contact> meetingContacts = getContacts(meetingContactIds);
+				countMeetings++;
+				LocalDateTime mtgDate = convertDateFormat(meetingDate);
+				if (mtgDate.isAfter(getNow())) {
+					meetings.add(new FutureMeetingImpl(meetingId, meetingContacts, meetingDate));
+				} else {
+					meetings.add(new PastMeetingImpl(meetingId, meetingContacts, meetingDate, meetingNotes));
+				}
+			}
+		} catch (FileNotFoundException ex) {
+			// so we want to have something earlier that skips the reading gig if file not found
+			// rather than have it as an exception... FIX THIS
+			System.out.println("File " + file + " does not exist. This is first ever use of CM");
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			closeReader(in);
+		}
+	}
+	
+	private void closeReader(Reader reader) {
+		try {
+			if(reader != null) {
+				reader.close();
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Returns DateTime of Contact Manager's clock (date & time).
 	 * Adjusted 'now' by number of days specified for this instance 
@@ -254,4 +369,6 @@ public class ContactManagerImpl implements ContactManager {
 			throw new IllegalArgumentException("Contact unknown");
 		}
 	}
+
+
 }

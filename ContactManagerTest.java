@@ -1,6 +1,9 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -19,7 +22,15 @@ public class ContactManagerTest {
 	public void setUpBeforeEachTest() {
 		//reset static countContacts to zero before each test
 		new ContactImpl(0);
-		//TODO: delete contacts.txt
+		//delete contacts.txt if it exists
+		File file = new File("./cw4/contacts.txt");
+        if(file.exists()) {
+        	try {
+                Files.deleteIfExists(file.toPath());
+            } catch (IOException | SecurityException ex) {
+                ex.printStackTrace();
+            }	
+        }	
 	}
 	
 	@Rule
