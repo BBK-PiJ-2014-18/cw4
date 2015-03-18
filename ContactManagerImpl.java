@@ -56,7 +56,12 @@ public class ContactManagerImpl implements ContactManager {
 		checkContacts(contacts);
 		countMeetings++;
 		int meetingId = countMeetings;
-		meetings.add(new FutureMeetingImpl(meetingId, contacts, date));
+		Meeting meetingToAdd = new FutureMeetingImpl(meetingId, contacts, date);
+		if (meetings.contains(meetingToAdd)) {
+			countMeetings--;
+			throw new IllegalArgumentException("Meeting already exists at that date/time");
+		}
+		meetings.add(meetingToAdd);
 		return meetingId;
 	}
 
