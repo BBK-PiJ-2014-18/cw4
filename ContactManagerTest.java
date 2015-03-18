@@ -847,6 +847,63 @@ public class ContactManagerTest {
 		String nullString = null;
 		cm2016.addMeetingNotes(1, nullString);
 	}
+
+	@Test
+	public void testAddMeetingNotesCanBeEmptyString() {
+		//make a normal contact manager with date as 2015
+		ContactManager cm2015 = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm2015);
+		cm2015.flush();
+		//make a contact manager with date as 2016 so mtg 1 is now in past
+		ContactManager cm2016 = new ContactManagerImpl(365);
+		String emptyString = "";
+		cm2016.addMeetingNotes(1, emptyString);
+		PastMeeting mtgActual = (PastMeeting) cm2016.getMeeting(1); 
+		assertEquals("", mtgActual.getNotes());
+	}
+
+	@Test
+	public void testAddMeetingNotesCanAddActualNotes() {
+		//make a normal contact manager with date as 2015
+		ContactManager cm2015 = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm2015);
+		cm2015.flush();
+		//make a contact manager with date as 2016 so mtg 1 is now in past
+		ContactManager cm2016 = new ContactManagerImpl(365);
+		cm2016.addMeetingNotes(1, "First notes.");
+		PastMeeting mtgActual = (PastMeeting) cm2016.getMeeting(1); 
+		assertEquals("First notes.", mtgActual.getNotes());
+	}
+	
+	@Test
+	public void testAddMeetingNotesCanAddNotesToEmptyStringNotes() {
+		//make a normal contact manager with date as 2015
+		ContactManager cm2015 = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm2015);
+		cm2015.flush();
+		//make a contact manager with date as 2016 so mtg 1 is now in past
+		ContactManager cm2016 = new ContactManagerImpl(365);
+		String emptyString = "";
+		cm2016.addMeetingNotes(1, emptyString);
+		cm2016.addMeetingNotes(1, "Some more notes.");
+		PastMeeting mtgActual = (PastMeeting) cm2016.getMeeting(1); 
+		assertEquals("Some more notes.", mtgActual.getNotes());
+	}	
+	
+	@Test
+	public void testAddMeetingNotesCanMoreNotesToExistingNotes() {
+		//make a normal contact manager with date as 2015
+		ContactManager cm2015 = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm2015);
+		cm2015.flush();
+		//make a contact manager with date as 2016 so mtg 1 is now in past
+		ContactManager cm2016 = new ContactManagerImpl(365);
+		cm2016.addMeetingNotes(1, "First notes.");
+		cm2016.addMeetingNotes(1, "Second notes.");
+		PastMeeting mtgActual = (PastMeeting) cm2016.getMeeting(1); 
+		assertEquals("First notes. Second notes.", mtgActual.getNotes());
+	}	
+	
 }
 
 
