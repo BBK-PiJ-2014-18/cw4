@@ -13,7 +13,7 @@ public class ContactManagerImpl implements ContactManager {
 
 	private Set<Contact> contacts;
 	private SortedSet<Meeting> meetings;
-	private int countContacts;
+//	private int countContacts;
 	private int countMeetings;
 	private long daysToAddToClockForTesting;
 	
@@ -25,7 +25,7 @@ public class ContactManagerImpl implements ContactManager {
 	public ContactManagerImpl() {
 		this.contacts = new HashSet<Contact>();
 		this.meetings = new TreeSet<Meeting>();
-		this.countContacts = 0;
+//		this.countContacts = 0;
 		this.countMeetings = 0;
 		this.daysToAddToClockForTesting = 0;
 	}
@@ -39,7 +39,7 @@ public class ContactManagerImpl implements ContactManager {
 	public ContactManagerImpl(long daysToAddToClockForTesting) {
 		this.contacts = new HashSet<Contact>();
 		this.meetings = new TreeSet<Meeting>();
-		this.countContacts = 0;
+//		this.countContacts = 0;
 		this.countMeetings = 0;
 		this.daysToAddToClockForTesting = daysToAddToClockForTesting;
 	}
@@ -168,9 +168,10 @@ public class ContactManagerImpl implements ContactManager {
 		if(name == "") {
 			throw new IllegalArgumentException("Name may not be empty string"); 
 		}
-		countContacts++;
-		int contactId = countContacts;
-		contacts.add(new ContactImpl(contactId, name, notes));
+//		countContacts++;
+//		int contactId = countContacts;
+//		contacts.add(new ContactImpl(contactId, name, notes));
+		contacts.add(new ContactImpl(name, notes));
 	}
 
 	@Override

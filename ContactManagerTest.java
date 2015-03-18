@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -15,12 +15,15 @@ import org.junit.rules.ExpectedException;
 
 public class ContactManagerTest {
 
-
-	
-	
+	@Before
+	public void setUp() {
+		new ContactImpl(0);
+	}
 	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
+	
+	//helper methods to add contacts and meetings
 	
 	public void helpAddContactsAndMeetings(ContactManager cm) {
 		cm.addNewContact("Anna Kingsbury", "ak notes");
@@ -714,9 +717,7 @@ public class ContactManagerTest {
 		assertEquals(PastMeetingImpl.class, actual.get(2).getClass());
 	}
 	
-	
-	
-	
+
 	
 	// tests for AddMeetingNotes
 
