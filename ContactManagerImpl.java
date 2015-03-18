@@ -153,7 +153,13 @@ public class ContactManagerImpl implements ContactManager {
 		checkContacts(contacts);
 		countMeetings++;
 		int meetingId = countMeetings;
-		meetings.add(new PastMeetingImpl(meetingId, contacts, date, text));
+		Meeting meetingToAdd = new PastMeetingImpl(meetingId, contacts, date, text);
+		if (meetings.contains(meetingToAdd)) {
+			countMeetings--;
+			throw new IllegalArgumentException("Meeting already exists at that date/time");
+		}
+
+		meetings.add(meetingToAdd);
 	}
 
 	@Override
