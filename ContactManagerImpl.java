@@ -176,6 +176,10 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public void addMeetingNotes(int id, String text) {
 		Meeting mtg = getMeeting(id);
+		LocalDateTime mtgDate = convertDateFormat(mtg.getDate());
+		if(mtgDate.isAfter(getNow())) {
+			throw new IllegalStateException("Meeting is in the future");
+		}
 		meetings.remove(mtg);
 		meetings.add(new PastMeetingImpl(id, mtg.getContacts(), mtg.getDate(), text));
 	}
