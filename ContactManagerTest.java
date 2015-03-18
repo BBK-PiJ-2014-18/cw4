@@ -799,8 +799,7 @@ public class ContactManagerTest {
 	
 	// tests for AddMeetingNotes
 
-	// TODO: this test ignored for now (need to have Contacts.txt in place before can run).
-	@Ignore @Test
+	@Test
 	public void testAddMeetingNotesConvertsFutureMtgToPastMtg() {
 		//make a normal contact manager with date as 2015
 		ContactManager cm2015 = new ContactManagerImpl();
@@ -816,6 +815,18 @@ public class ContactManagerTest {
 		assertEquals(expectedContacts, actual.getContacts());
 		assertEquals(expectedDate, actual.getDate());
 	}
+	
+	@Test
+	public void testAddMeetingNotesExceptionWhenDateInFuture() {
+		//make a normal contact manager with date as 2015
+		ContactManager cm2015 = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm2015);
+		thrown.expect(IllegalStateException.class);
+		thrown.expectMessage("Meeting is in the future");
+		cm2015.addMeetingNotes(1, "Adding Meeting Notes to Meeting One");
+	}
+	
+	
 }
 
 
