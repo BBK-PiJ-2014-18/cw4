@@ -834,7 +834,19 @@ public class ContactManagerTest {
 		cm2015.addMeetingNotes(3, "Adding Meeting Notes to Meeting Three (doesn't exist)");
 	}
 
-	
+	@Test
+	public void testAddMeetingNotesExceptionWhenNotesAreNull() {
+		//make a normal contact manager with date as 2015
+		ContactManager cm2015 = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm2015);
+		cm2015.flush();
+		//make a contact manager with date as 2016 so mtg 1 is now in past
+		ContactManager cm2016 = new ContactManagerImpl(365);
+		thrown.expect(NullPointerException.class);
+		thrown.expectMessage("Notes may not be null");
+		String nullString = null;
+		cm2016.addMeetingNotes(1, nullString);
+	}
 }
 
 
