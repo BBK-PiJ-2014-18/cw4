@@ -176,6 +176,9 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public void addMeetingNotes(int id, String text) {
 		Meeting mtg = getMeeting(id);
+		if (mtg == null) {
+			throw new IllegalArgumentException("Meeting does not exist");
+		}
 		LocalDateTime mtgDate = convertDateFormat(mtg.getDate());
 		if(mtgDate.isAfter(getNow())) {
 			throw new IllegalStateException("Meeting is in the future");
