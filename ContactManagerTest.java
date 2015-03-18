@@ -16,8 +16,10 @@ import org.junit.rules.ExpectedException;
 public class ContactManagerTest {
 
 	@Before
-	public void setUp() {
+	public void setUpBeforeEachTest() {
+		//reset static countContacts to zero before each test
 		new ContactImpl(0);
+		//TODO: delete contacts.txt
 	}
 	
 	@Rule
@@ -759,8 +761,30 @@ public class ContactManagerTest {
 		cm.addNewPastMeeting(moreExpectedContacts, secondExpectedDate, "notes");
 	}
 	
+	//testing writing and reading contacts.txt
 	
-	
+	@Test
+	public void testFirstElementsOfWriteAndReadContactsTxt() {
+		ContactManager firstCM = new ContactManagerImpl();
+		helpAddContactsAndMeetings(firstCM);
+		firstCM.flush();
+		ContactManager secondCM = new ContactManagerImpl();
+		Set<Contact> kMtgContacts = new HashSet<Contact>();
+		kMtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		kMtgContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		kMtgContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));
+		Calendar kMtgDate = new GregorianCalendar(2015, 8, 14, 11, 2);
+		assertEquals(kMtgContacts, secondCM.getFutureMeeting(1).getContacts());
+		assertEquals(kMtgDate, secondCM.getFutureMeeting(1).getDate());
+		Set<Contact> jMtgContacts = new HashSet<Contact>();
+		jMtgContacts.add(new ContactImpl(4, "Anna Jones", "aj notes"));
+		jMtgContacts.add(new ContactImpl(5, "Brian Jones", "bj notes"));
+		jMtgContacts.add(new ContactImpl(6, "Cathy Jones", "cj notes"));
+		Calendar jMtgDate = new GregorianCalendar(2014, 8, 15, 11, 2);
+		assertEquals(jMtgContacts, secondCM.getPastMeeting(2).getContacts());
+		assertEquals(jMtgDate, secondCM.getPastMeeting(2).getDate());
+		assertEquals("New Past Meeting Notes", secondCM.getPastMeeting(2).getNotes());
+	}
 	
 	// tests for AddMeetingNotes
 
