@@ -187,6 +187,9 @@ public class ContactManagerImpl implements ContactManager {
 			throw new IllegalStateException("Meeting is in the future");
 		}
 		meetings.remove(mtg);
+		if (mtg instanceof PastMeeting){
+			text = ((PastMeeting) mtg).getNotes() + text;
+		}
 		meetings.add(new PastMeetingImpl(id, mtg.getContacts(), mtg.getDate(), text));
 	}
 

@@ -899,7 +899,7 @@ public class ContactManagerTest {
 		//make a contact manager with date as 2016 so mtg 1 is now in past
 		ContactManager cm2016 = new ContactManagerImpl(365);
 		cm2016.addMeetingNotes(1, "First notes.");
-		cm2016.addMeetingNotes(1, "Second notes.");
+		cm2016.addMeetingNotes(1, " Second notes.");
 		PastMeeting mtgActual = (PastMeeting) cm2016.getMeeting(1); 
 		assertEquals("First notes. Second notes.", mtgActual.getNotes());
 	}	
