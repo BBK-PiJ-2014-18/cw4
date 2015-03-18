@@ -590,6 +590,20 @@ public class ContactManagerTest {
 	}
 	
 	@Test
+	public void testAddNewPastMeetingExceptionOnDateInFuture() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		Set<Contact> contacts =  new HashSet<Contact>();
+		contacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		Calendar date = new GregorianCalendar(2019, 8, 15, 11, 2);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Date may not be in future");
+		cm.addNewPastMeeting(contacts, date, "notes");
+	}
+	
+	
+	
+	@Test
 	public void testAddNewPastMeetingExceptionOnNotesNull() {
 		ContactManager cm = new ContactManagerImpl();
 		cm.addNewContact("Anna Kingsbury", "ak notes");
