@@ -717,7 +717,35 @@ public class ContactManagerTest {
 		assertEquals(PastMeetingImpl.class, actual.get(2).getClass());
 	}
 	
-
+	@Test
+	public void testsThatCanNotAddTwoFutureMeetingsWithSameTime() {
+		ContactManager cm = new ContactManagerImpl();
+		cm.addNewContact("Anna Kingsbury", "ak notes");
+		cm.addNewContact("Brian Kingsbury", "bk notes");
+		cm.addNewContact("Cathy Kingsbury", "ck notes");
+		Set<Contact> expectedContacts = new HashSet<Contact>();
+		expectedContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		expectedContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		expectedContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));
+		Calendar expectedDate = new GregorianCalendar(2015, 8, 14, 11, 2);
+		int actualMtgId = cm.addFutureMeeting(expectedContacts, expectedDate);
+		assertEquals(1, actualMtgId);
+		FutureMeeting actual = cm.getFutureMeeting(1);
+		assertEquals(expectedContacts, actual.getContacts());
+		assertEquals(expectedDate, actual.getDate());
+		Set<Contact> moreExpectedContacts = new HashSet<Contact>();
+		moreExpectedContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		moreExpectedContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		Calendar secondExpectedDate = new GregorianCalendar(2015, 8, 14, 11, 2);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Meeting already exists at that date/time");
+		int secondActualMtgId = cm.addFutureMeeting(moreExpectedContacts, secondExpectedDate);
+		
+//		assertEquals(2, secondActualMtgId);
+//		FutureMeeting secondActual = cm.getFutureMeeting(1);
+//		assertEquals(expectedContacts, secondActual.getContacts());
+//		assertEquals(expectedDate, secondActual.getDate());
+	}
 	
 	// tests for AddMeetingNotes
 
