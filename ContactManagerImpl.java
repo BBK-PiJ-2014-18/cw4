@@ -161,6 +161,10 @@ public class ContactManagerImpl implements ContactManager {
 		if (contacts == null || date == null || text == null) {
 			throw new NullPointerException("NewPastMeeting arguments may not be null");
 		}
+		LocalDateTime checkDate = convertDateFormat(date);
+		if (checkDate.isAfter(getNow())) {
+			throw new IllegalArgumentException("Date may not be in future");
+		}
 		checkContacts(contacts);
 		countMeetings++;
 		int meetingId = countMeetings;

@@ -92,22 +92,9 @@ public class ContactManagerTest {
 		Calendar aMtgDate = new GregorianCalendar(today.get(Calendar.YEAR), today.get(Calendar.MONTH), 
 				today.get(Calendar.DAY_OF_MONTH), 23, 59);
 		Calendar bMtgDate = new GregorianCalendar(today.get(Calendar.YEAR), today.get(Calendar.MONTH), 
-				today.get(Calendar.DAY_OF_MONTH), 10, 0);
+				today.get(Calendar.DAY_OF_MONTH), 0, 02);
 		Calendar cMtgDate = new GregorianCalendar(today.get(Calendar.YEAR), today.get(Calendar.MONTH), 
-				today.get(Calendar.DAY_OF_MONTH), 00, 01);
-		cm.addNewPastMeeting(aMtgContacts, aMtgDate, "notes");
-		cm.addNewPastMeeting(bMtgContacts, bMtgDate, "notes");
-		cm.addNewPastMeeting(cMtgContacts, cMtgDate, "notes");
-	}
-		
-	
-	public void helpAddMixedMeetings(ContactManager cm) {
-		Set<Contact> aMtgContacts = cm.getContacts(1,4);
-		Set<Contact> bMtgContacts = cm.getContacts(2,5);
-		Set<Contact> cMtgContacts = cm.getContacts(3,6);
-		Calendar aMtgDate = new GregorianCalendar(2015, 9, 13, 00, 2);
-		Calendar bMtgDate = new GregorianCalendar(2015, 9, 13, 10, 0);
-		Calendar cMtgDate = new GregorianCalendar(2015, 9, 13, 23, 59);
+				today.get(Calendar.DAY_OF_MONTH), 0, 01);
 		cm.addFutureMeeting(aMtgContacts, aMtgDate);
 		cm.addNewPastMeeting(bMtgContacts, bMtgDate, "notes");
 		cm.addNewPastMeeting(cMtgContacts, cMtgDate, "notes");
@@ -528,7 +515,7 @@ public class ContactManagerTest {
 		Set<Contact> contactsWithAnUnknown = new HashSet<Contact>();
 		contactsWithAnUnknown.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
 		contactsWithAnUnknown.add(new ContactImpl(2, "Elvis", "smooth notes"));
-		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		Calendar date = new GregorianCalendar(2014, 8, 14, 11, 2);
 		thrown.expect(IllegalArgumentException.class);
 		thrown.expectMessage("Contact unknown");
 		cm.addNewPastMeeting(contactsWithAnUnknown, date, "notes on new past meeting");
@@ -540,7 +527,7 @@ public class ContactManagerTest {
 		Set<Contact> contactsWithAnUnknown = new HashSet<Contact>();
 		contactsWithAnUnknown.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
 		contactsWithAnUnknown.add(new ContactImpl(2, "Elvis", "smooth notes"));
-		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		Calendar date = new GregorianCalendar(2014, 8, 14, 11, 2);
 		thrown.expect(IllegalArgumentException.class);
 		thrown.expectMessage("Contact unknown");
 		cm.addNewPastMeeting(contactsWithAnUnknown, date, "notes on new past meeting");
@@ -551,7 +538,7 @@ public class ContactManagerTest {
 		ContactManager cm = new ContactManagerImpl();
 		cm.addNewContact("Anna Kingsbury", "ak notes");
 		Set<Contact> emptyContactSet = new HashSet<Contact>();
-		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		Calendar date = new GregorianCalendar(2014, 8, 14, 11, 2);
 		thrown.expect(IllegalArgumentException.class);
 		thrown.expectMessage("Contact Set Empty");
 		cm.addNewPastMeeting(emptyContactSet, date, "notes");
@@ -561,7 +548,7 @@ public class ContactManagerTest {
 	public void testAddNewPastMeetingExceptionWhenSetOfContactsEmptyAndNoneInCM() {
 		ContactManager cm = new ContactManagerImpl();
 		Set<Contact> emptyContactSet = new HashSet<Contact>();
-		Calendar date = new GregorianCalendar(2016, 8, 14, 11, 2);
+		Calendar date = new GregorianCalendar(2014, 8, 14, 11, 2);
 		thrown.expect(IllegalArgumentException.class);
 		thrown.expectMessage("Contact Set Empty");
 		cm.addNewPastMeeting(emptyContactSet, date, "notes");
@@ -693,7 +680,8 @@ public class ContactManagerTest {
 		assertEquals(secondContacts, actual.get(1).getContacts());
 		assertEquals(thirdContacts, actual.get(2).getContacts());
 	}
-	
+
+
 	@Test
 	public void testGetFutureMeetingListWithTodayDate() {
 		ContactManager cm = new ContactManagerImpl();
@@ -717,31 +705,6 @@ public class ContactManagerTest {
 		assertEquals(firstContacts, actual.get(2).getContacts());
 		assertEquals(secondContacts, actual.get(1).getContacts());
 		assertEquals(thirdContacts, actual.get(0).getContacts());
-	}
-	
-	@Test
-	public void testGetFutureMeetingListReturnsBothTypesOfMeeting() {
-		ContactManager cm = new ContactManagerImpl();
-		helpAddContactsAndMeetings(cm);
-		helpAddMixedMeetings(cm);
-		Set<Contact> firstContacts = new HashSet<Contact>();
-		Set<Contact> secondContacts = new HashSet<Contact>();
-		Set<Contact> thirdContacts = new HashSet<Contact>();
-		firstContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
-		secondContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
-		thirdContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));		
-		firstContacts.add(new ContactImpl(4, "Anna Jones", "aj notes"));
-		secondContacts.add(new ContactImpl(5, "Brian Jones", "bj notes"));
-		thirdContacts.add(new ContactImpl(6, "Cathy Jones", "cj notes"));
-		Calendar testDate = new GregorianCalendar(2015, 9, 13, 12, 12);
-		List<Meeting> actual = cm.getFutureMeetingList(testDate);
-		assertEquals(3, actual.size());
-		assertEquals(firstContacts, actual.get(0).getContacts());
-		assertEquals(secondContacts, actual.get(1).getContacts());
-		assertEquals(thirdContacts, actual.get(2).getContacts());
-		assertEquals(FutureMeetingImpl.class, actual.get(0).getClass());
-		assertEquals(PastMeetingImpl.class, actual.get(1).getClass());
-		assertEquals(PastMeetingImpl.class, actual.get(2).getClass());
 	}
 	
 	@Test
