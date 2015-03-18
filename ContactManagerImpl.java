@@ -175,6 +175,9 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public void addMeetingNotes(int id, String text) {
+		if(text == null) {
+			throw new NullPointerException("Notes may not be null");
+		}
 		Meeting mtg = getMeeting(id);
 		if (mtg == null) {
 			throw new IllegalArgumentException("Meeting does not exist");
