@@ -818,14 +818,22 @@ public class ContactManagerTest {
 	
 	@Test
 	public void testAddMeetingNotesExceptionWhenDateInFuture() {
-		//make a normal contact manager with date as 2015
 		ContactManager cm2015 = new ContactManagerImpl();
 		helpAddContactsAndMeetings(cm2015);
 		thrown.expect(IllegalStateException.class);
 		thrown.expectMessage("Meeting is in the future");
 		cm2015.addMeetingNotes(1, "Adding Meeting Notes to Meeting One");
 	}
-	
+
+	@Test
+	public void testAddMeetingNotesExceptionWhenMtgDoesNotExist() {
+		ContactManager cm2015 = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm2015);
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Meeting does not exist");
+		cm2015.addMeetingNotes(3, "Adding Meeting Notes to Meeting Three (doesn't exist)");
+	}
+
 	
 }
 
