@@ -773,6 +773,19 @@ public class ContactManagerTest {
 		assertEquals(jMtgDate, secondCM.getPastMeeting(2).getDate());
 		assertEquals("New Past Meeting Notes", secondCM.getPastMeeting(2).getNotes());
 	}
+
+	@Test
+	public void testCanAddNewContactAfterWriteAndReadContactsTxt() {
+		ContactManager firstCM = new ContactManagerImpl();
+		helpAddContactsAndMeetings(firstCM);
+		firstCM.flush();
+		ContactManager secondCM = new ContactManagerImpl();
+		secondCM.addNewContact("Garry Gibbon", "gg notes");
+		Contact expected = new ContactImpl(7, "Garry Gibbon", "gg notes");
+		assertEquals(expected, secondCM.getContacts(7));
+	}
+	
+	
 	
 	// tests for AddMeetingNotes
 
