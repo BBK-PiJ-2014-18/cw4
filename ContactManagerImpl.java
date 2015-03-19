@@ -32,6 +32,7 @@ public class ContactManagerImpl implements ContactManager {
 	 */	
 	
 	public ContactManagerImpl() {
+	//	new ContactImpl(0);			//reset the static id counter countContacts ? will break if multi cms running??
 		this.contacts = new HashSet<Contact>();
 		this.meetings = new TreeSet<Meeting>();
 //		this.countContacts = 0;
@@ -47,6 +48,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * @param daysToAddToClockForTesting
 	 */
 	public ContactManagerImpl(long daysToAddToClockForTesting) {
+	//	new ContactImpl(0);			//reset the static id counter countContacts
 		this.contacts = new HashSet<Contact>();
 		this.meetings = new TreeSet<Meeting>();
 //		this.countContacts = 0;
@@ -55,13 +57,13 @@ public class ContactManagerImpl implements ContactManager {
 		loadRecords();
 	}
 	
+
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
 		if(contacts == null || date == null) {
 			throw new NullPointerException("AddFutureMeeting arguments may not be null");
 		}
-		LocalDateTime mtgDate = convertDateFormat(date);
-		if (mtgDate.isBefore(getNow())) {
+		if(!checkDateIsInFuture(date)) {
 			throw new IllegalArgumentException("Date is in the past");
 		}
 		checkContacts(contacts);
@@ -161,10 +163,9 @@ public class ContactManagerImpl implements ContactManager {
 		if (contacts == null || date == null || text == null) {
 			throw new NullPointerException("NewPastMeeting arguments may not be null");
 		}
-		LocalDateTime checkDate = convertDateFormat(date);
-		if (checkDate.isAfter(getNow())) {
+		if(!dateIsInPast(date)) {
 			throw new IllegalArgumentException("Date may not be in future");
-		}
+		};
 		checkContacts(contacts);
 		countMeetings++;
 		int meetingId = countMeetings;
@@ -186,8 +187,7 @@ public class ContactManagerImpl implements ContactManager {
 		if (mtg == null) {
 			throw new IllegalArgumentException("Meeting does not exist");
 		}
-		LocalDateTime mtgDate = convertDateFormat(mtg.getDate());
-		if(mtgDate.isAfter(getNow())) {
+		if(!dateIsInPast(mtg.getDate())) {
 			throw new IllegalStateException("Meeting is in the future");
 		}
 		meetings.remove(mtg);
@@ -331,11 +331,10 @@ public class ContactManagerImpl implements ContactManager {
 				}
 				Set<Contact> meetingContacts = getContacts(meetingContactIds);
 				countMeetings++;
-				LocalDateTime mtgDate = convertDateFormat(meetingDate);
-				if (mtgDate.isAfter(getNow())) {
-					meetings.add(new FutureMeetingImpl(meetingId, meetingContacts, meetingDate));
-				} else {
+				if (dateIsInPast(meetingDate)) {
 					meetings.add(new PastMeetingImpl(meetingId, meetingContacts, meetingDate, meetingNotes));
+				} else {
+					meetings.add(new FutureMeetingImpl(meetingId, meetingContacts, meetingDate));
 				}
 			}
 		} catch (FileNotFoundException ex) {
@@ -377,11 +376,20 @@ public class ContactManagerImpl implements ContactManager {
 		return zdtDate.toLocalDateTime();
 	}
 	
+	private boolean checkDateIsInFuture(Calendar date) {
+		LocalDateTime checkDate = convertDateFormat(date);
+		return (checkDate.isAfter(getNow())); 
+	}	
+
+	private boolean dateIsInPast(Calendar date) {
+		LocalDateTime checkDate = convertDateFormat(date);
+		return (checkDate.isBefore(getNow()));		
+	}
+	
 	private void checkContacts(Set<Contact> contacts) {
 		if(contacts.size() == 0) {
 			throw new IllegalArgumentException("Contact Set Empty");
-		}
-		
+		}	
 		if(!this.contacts.containsAll(contacts)) {
 			throw new IllegalArgumentException("Contact unknown");
 		}
