@@ -781,14 +781,14 @@ public class ContactManagerTest {
 		firstCM.flush();
 		ContactManager secondCM = new ContactManagerImpl();
 		secondCM.addNewContact("Garry Gibbon", "gg notes");
-		Contact expected = new ContactImpl(7, "Garry Gibbon", "gg notes");
-		assertEquals(expected, secondCM.getContacts(7));
+		Contact expected = new ContactImpl(19, "Garry Gibbon", "gg notes");
+		Set<Contact> expectedContacts = new HashSet<Contact>();
+		expectedContacts.add(expected);
+		assertEquals(expectedContacts, secondCM.getContacts(19));
+		secondCM.flush();
 	}
 	
-	
-	
 	// tests for AddMeetingNotes
-
 	@Test
 	public void testAddMeetingNotesConvertsFutureMtgToPastMtg() {
 		//make a normal contact manager with date as 2015

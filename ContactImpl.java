@@ -36,6 +36,7 @@ public class ContactImpl implements Contact {
 	 */	
 	
 	public ContactImpl(int contactId, String name, String notes) {
+		countContacts++;
 		this.contactId = contactId;
 		this.contactName = name;
 		this.contactNotes = notes;

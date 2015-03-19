@@ -32,7 +32,7 @@ public class ContactManagerImpl implements ContactManager {
 	 */	
 	
 	public ContactManagerImpl() {
-	//	new ContactImpl(0);			//reset the static id counter countContacts ? will break if multi cms running??
+//		new ContactImpl(0);			//reset the static id counter countContacts ? will break if multi cms running??
 		this.contacts = new HashSet<Contact>();
 		this.meetings = new TreeSet<Meeting>();
 //		this.countContacts = 0;
@@ -48,7 +48,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * @param daysToAddToClockForTesting
 	 */
 	public ContactManagerImpl(long daysToAddToClockForTesting) {
-	//	new ContactImpl(0);			//reset the static id counter countContacts
+		new ContactImpl(0);			//reset the static id counter countContacts
 		this.contacts = new HashSet<Contact>();
 		this.meetings = new TreeSet<Meeting>();
 //		this.countContacts = 0;
