@@ -63,7 +63,7 @@ public class ContactManagerImpl implements ContactManager {
 		if(contacts == null || date == null) {
 			throw new NullPointerException("AddFutureMeeting arguments may not be null");
 		}
-		if(!checkDateIsInFuture(date)) {
+		if(dateIsInPast(date)) {
 			throw new IllegalArgumentException("Date is in the past");
 		}
 		checkContacts(contacts);
@@ -165,7 +165,7 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		if(!dateIsInPast(date)) {
 			throw new IllegalArgumentException("Date may not be in future");
-		};
+		}
 		checkContacts(contacts);
 		countMeetings++;
 		int meetingId = countMeetings;
@@ -376,11 +376,6 @@ public class ContactManagerImpl implements ContactManager {
 		return zdtDate.toLocalDateTime();
 	}
 	
-	private boolean checkDateIsInFuture(Calendar date) {
-		LocalDateTime checkDate = convertDateFormat(date);
-		return (checkDate.isAfter(getNow())); 
-	}	
-
 	private boolean dateIsInPast(Calendar date) {
 		LocalDateTime checkDate = convertDateFormat(date);
 		return (checkDate.isBefore(getNow()));		
