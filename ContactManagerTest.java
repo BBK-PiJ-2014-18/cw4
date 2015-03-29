@@ -1004,11 +1004,10 @@ public class ContactManagerTest {
 	public void testGetFutureMeetingListReturnsEmptyListIfContactExistsOnlyPastMeetings() {
 		ContactManager cm = new ContactManagerImpl();
 		helpAddContactsAndMeetings(cm);
-		Contact jane = new ContactImpl(4, "Anna xJones", "aj notes");
+		Contact jane = new ContactImpl(4, "Anna Jones", "aj notes");
 		List<Meeting> actual =cm.getFutureMeetingList(jane);
 		assertEquals(0, actual.size());
 	}
-	
 	
 	@Test
 	public void testGetFutureMeetingListExceptionOnContactThatDoesNotExist() {
@@ -1016,7 +1015,8 @@ public class ContactManagerTest {
 		helpAddContactsAndMeetings(cm);
 		Contact jane = new ContactImpl(99, "Jane Kingsbury", "jk notes");
 		cm.getFutureMeetingList(jane);
-		
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Contact does not exist");
 	}
 	
 	@Test
@@ -1024,13 +1024,10 @@ public class ContactManagerTest {
 		ContactManager cm = new ContactManagerImpl();
 		helpAddContactsAndMeetings(cm);
 		Contact nullcontact = null;
-		cm.getFutureMeetingList(nullcontact);
-		
+		cm.getFutureMeetingList(nullcontact);		
+		thrown.expect(NullPointerException.class);
+		thrown.expectMessage("Contact may not be null");
 	}
-	
-	
-	
-	
 }
 
 
