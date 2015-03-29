@@ -78,10 +78,11 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public PastMeeting getPastMeeting(int id) {
+		migrateFutureMeetings();
 		for(Meeting mtg: meetings) {
 			if (mtg.getId() == id) {
 				if (mtg instanceof FutureMeeting){
-					throw new IllegalArgumentException("Meeting with that ID is a FutureMeeting");
+					throw new IllegalArgumentException("Meeting with that ID is in the future");
 				}				
 				return (PastMeeting) mtg;
 			}
@@ -91,10 +92,11 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public FutureMeeting getFutureMeeting(int id) {
+		migrateFutureMeetings();
 		for(Meeting mtg: meetings) {
 			if (mtg.getId() == id) {
 				if (mtg instanceof PastMeeting){
-					throw new IllegalArgumentException("Meeting with that ID is a PastMeeting");
+					throw new IllegalArgumentException("Meeting with that ID is in the past");
 				}
 				return (FutureMeeting) mtg;
 			}
@@ -118,6 +120,7 @@ public class ContactManagerImpl implements ContactManager {
 	*/	
 	@Override
 	public List<Meeting> getFutureMeetingList(Contact contact) {
+		migrateFutureMeetings();
 		if(!this.contacts.contains(contact)) {
 			throw new IllegalArgumentException("Contact unknown");
 		}
@@ -139,6 +142,7 @@ public class ContactManagerImpl implements ContactManager {
 	
 	@Override
 	public List<Meeting> getFutureMeetingList(Calendar date) {
+		migrateFutureMeetings();
 		List<Meeting> result = new LinkedList<Meeting>();
 		for (Meeting mtg: meetings) {
 			if(mtg.getDate().get(Calendar.YEAR) == date.get(Calendar.YEAR)
@@ -187,7 +191,6 @@ public class ContactManagerImpl implements ContactManager {
 			countMeetings--;
 			throw new IllegalArgumentException("Meeting already exists at that date/time");
 		}
-
 		meetings.add(meetingToAdd);
 	}
 

@@ -394,20 +394,20 @@ public class ContactManagerTest {
 	}
 
 	@Test
-	public void testGetPastMeetingExceptionWhenMtgIdIsMtgIsAN_ACTUALFutureMeeting() {
+	public void testGetPastMeetingExceptionWhenMtgIdIsMtgIsInFuture() {
 		ContactManager cm = new ContactManagerImpl();
 		helpAddContactsAndMeetings(cm);		
 		thrown.expect(IllegalArgumentException.class);
-		thrown.expectMessage("Meeting with that ID is a FutureMeeting");			
+		thrown.expectMessage("Meeting with that ID is in the future");			
 		cm.getPastMeeting(1);
 	}
 	
 	@Test
-	public void testGetFutureMeetingExceptionWhenMtgIdIsAN_ACTUALPastMeeting() {
+	public void testGetFutureMeetingExceptionWhenMtgIdIsInThePast() {
 		ContactManager cm = new ContactManagerImpl();
 		helpAddContactsAndMeetings(cm);
 		thrown.expect(IllegalArgumentException.class);
-		thrown.expectMessage("Meeting with that ID is a PastMeeting");	
+		thrown.expectMessage("Meeting with that ID is in the past");	
 		cm.getFutureMeeting(2);
 	}	
 	
@@ -1075,10 +1075,10 @@ public class ContactManagerTest {
 		cm.addNewPastMeeting(k3MtgContacts, k3MtgDate, "notes");
 		Contact anna = new ContactImpl(1, "Anna Kingsbury", "ak notes");
 		Calendar justInFuture = Calendar.getInstance();
-		justInFuture.roll(Calendar.SECOND, 1);//make plus one second
+		justInFuture.roll(Calendar.SECOND, 2);//make plus two seconds
 		cm.addFutureMeeting(k3MtgContacts, justInFuture);
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(4000);  //wait 4 seconds so that mtg is just in past
 		} catch (InterruptedException ex) {
 			ex.printStackTrace();
 		}
