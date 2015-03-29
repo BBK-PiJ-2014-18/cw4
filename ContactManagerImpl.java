@@ -19,6 +19,7 @@ import java.util.TreeSet;
 public class ContactManagerImpl implements ContactManager {
 
 	private static final String DATA_FILE_NAME = "./cw4/contacts.txt";
+	private static final String CSV_SPLIT_STRING = "\",\"";
 	
 	private Set<Contact> contacts;
 	private SortedSet<Meeting> meetings;
@@ -274,27 +275,27 @@ public class ContactManagerImpl implements ContactManager {
 			//TEST FOR PUTTING SOMETHING OTHER THAN "contacts" BREAKS CHECK IN LOADRECORDS()
 			out.println("contacts");
 			for(Contact contact: contacts) {
-				out.println(contact.getId() + "," + contact.getName() + 
-						","+ contact.getNotes() + ",");
+				out.println(contact.getId() + CSV_SPLIT_STRING + contact.getName() + 
+						CSV_SPLIT_STRING + contact.getNotes() + CSV_SPLIT_STRING);
 			}
 			out.println("meetings");
 			
 			for(Meeting meeting: meetings) {
-				String dateStr = meeting.getDate().get(Calendar.YEAR) + ","
-						+ meeting.getDate().get(Calendar.MONTH) + ","
-						+ meeting.getDate().get(Calendar.DAY_OF_MONTH) + ","
-						+ meeting.getDate().get(Calendar.HOUR_OF_DAY) + ","
+				String dateStr = meeting.getDate().get(Calendar.YEAR) + CSV_SPLIT_STRING
+						+ meeting.getDate().get(Calendar.MONTH) + CSV_SPLIT_STRING
+						+ meeting.getDate().get(Calendar.DAY_OF_MONTH) + CSV_SPLIT_STRING
+						+ meeting.getDate().get(Calendar.HOUR_OF_DAY) + CSV_SPLIT_STRING
 						+ meeting.getDate().get(Calendar.MINUTE);
-				String str = meeting.getId() + "," + dateStr + ",";	
+				String str = meeting.getId() + CSV_SPLIT_STRING + dateStr + CSV_SPLIT_STRING;	
 				if (meeting instanceof PastMeeting){
 					PastMeeting pastMeeting = (PastMeeting) meeting;
-					str = str + pastMeeting.getNotes() + ",";
+					str = str + pastMeeting.getNotes() + CSV_SPLIT_STRING;
 				} else {
-					str = str + "" + ",";
+					str = str + "" + CSV_SPLIT_STRING;
 				}
 				for (Contact contact: meeting.getContacts()) {
 					//do this the cool way...
-					str = str + contact.getId() + ",";
+					str = str + contact.getId() + CSV_SPLIT_STRING;
 				};
 	
 				out.println(str);
@@ -321,14 +322,14 @@ public class ContactManagerImpl implements ContactManager {
 			};
 			String[] contactToLoad;
 			while((line = in.readLine()) != null && !line.equals("meetings")) {
-				contactToLoad = line.split(",", -1);
+				contactToLoad = line.split(CSV_SPLIT_STRING, -1);
 				int contactId = Integer.parseInt(contactToLoad[0]);
 				countContacts++;
 				contacts.add(new ContactImpl(contactId, contactToLoad[1], contactToLoad[2]));
 			}
 			String[] meetingToLoad;
 			while((line = in.readLine()) != null) {
-				meetingToLoad = line.split(",", -1);
+				meetingToLoad = line.split(CSV_SPLIT_STRING, -1);
 				int meetingId = Integer.parseInt(meetingToLoad[0]);
 				Calendar meetingDate = new GregorianCalendar(
 						Integer.parseInt(meetingToLoad[1]),
