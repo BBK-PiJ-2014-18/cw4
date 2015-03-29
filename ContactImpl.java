@@ -1,5 +1,7 @@
 public class ContactImpl implements Contact {
 	
+	private static final String CSV_SPLIT_STRING = "\",\"";
+	
 	private int contactId;
 	private String contactName;
 	private String contactNotes;
@@ -58,5 +60,12 @@ public class ContactImpl implements Contact {
 		result = 31 * result + contactName.hashCode();		
 		result = 31 * result + contactNotes.hashCode();
 		return result;
+	}
+	
+	@Override
+	public String toString() {
+		return contactId + CSV_SPLIT_STRING + contactName + 
+				CSV_SPLIT_STRING + contactNotes + CSV_SPLIT_STRING;
+
 	}
 }

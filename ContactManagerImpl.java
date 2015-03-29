@@ -272,36 +272,16 @@ public class ContactManagerImpl implements ContactManager {
 		File file = new File(DATA_FILE_NAME);
 		try {
 			out = new PrintWriter(file);
-			//TEST FOR PUTTING SOMETHING OTHER THAN "contacts" BREAKS CHECK IN LOADRECORDS()
 			out.println("contacts");
 			for(Contact contact: contacts) {
-				out.println(contact.getId() + CSV_SPLIT_STRING + contact.getName() + 
-						CSV_SPLIT_STRING + contact.getNotes() + CSV_SPLIT_STRING);
+				out.println(contact.toString());			
 			}
 			out.println("meetings");
-			
 			for(Meeting meeting: meetings) {
-				String dateStr = meeting.getDate().get(Calendar.YEAR) + CSV_SPLIT_STRING
-						+ meeting.getDate().get(Calendar.MONTH) + CSV_SPLIT_STRING
-						+ meeting.getDate().get(Calendar.DAY_OF_MONTH) + CSV_SPLIT_STRING
-						+ meeting.getDate().get(Calendar.HOUR_OF_DAY) + CSV_SPLIT_STRING
-						+ meeting.getDate().get(Calendar.MINUTE);
-				String str = meeting.getId() + CSV_SPLIT_STRING + dateStr + CSV_SPLIT_STRING;	
-				if (meeting instanceof PastMeeting){
-					PastMeeting pastMeeting = (PastMeeting) meeting;
-					str = str + pastMeeting.getNotes() + CSV_SPLIT_STRING;
-				} else {
-					str = str + "" + CSV_SPLIT_STRING;
-				}
-				for (Contact contact: meeting.getContacts()) {
-					//do this the cool way...
-					str = str + contact.getId() + CSV_SPLIT_STRING;
-				};
-	
-				out.println(str);
+				out.println(meeting.toString());
 			}
 		} catch (FileNotFoundException ex) {
-			System.out.println("Cannot write to file " + file + ".");
+			ex.printStackTrace();
 		} finally {
 			out.close();
 		}
@@ -317,8 +297,7 @@ public class ContactManagerImpl implements ContactManager {
 			in = new BufferedReader(new FileReader(file));
 			String line;
 			if(!(line = in.readLine()).equals("contacts")) {
-				// FIX THIS...
-				System.out.println("we have a problem - do something smarter here");
+				throw new IllegalStateException("Data File has error");
 			};
 			String[] contactToLoad;
 			while((line = in.readLine()) != null && !line.equals("meetings")) {
@@ -338,9 +317,9 @@ public class ContactManagerImpl implements ContactManager {
 						Integer.parseInt(meetingToLoad[4]),
 						Integer.parseInt(meetingToLoad[5]));
 				String meetingNotes = meetingToLoad[6];
-				int[] meetingContactIds = new int[meetingToLoad.length -8];
-				// 6 would make sense, 7 is a magic number - todo with the -1 in line.split(",", -1)
-				for(int i = 0; i < meetingToLoad.length - 8; i++) {
+				int numberOfContactsAtMtg = meetingToLoad.length - 8;
+				int[] meetingContactIds = new int[numberOfContactsAtMtg];
+				for(int i = 0; i < numberOfContactsAtMtg; i++) {
 					meetingContactIds[i] = Integer.parseInt(meetingToLoad[i+7]); 
 				}
 				Set<Contact> meetingContacts = getContacts(meetingContactIds);
@@ -352,9 +331,7 @@ public class ContactManagerImpl implements ContactManager {
 				}
 			}
 		} catch (FileNotFoundException ex) {
-			// so we want to have something earlier that skips the reading gig if file not found
-			// rather than have it as an exception... FIX THIS
-			System.out.println("File " + file + " does not exist. This is first ever use of CM");
+			ex.printStackTrace();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {

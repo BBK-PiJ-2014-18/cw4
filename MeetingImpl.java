@@ -4,13 +4,15 @@ import java.util.Set;
 
 public abstract class MeetingImpl implements Meeting, Comparable<Meeting> {
 
+	private static final String CSV_SPLIT_STRING = "\",\"";
+	
 	private int meetingId;
-	private Calendar scheduledDate;
+	private Calendar date;
 	private Set<Contact> meetingContacts;
 	
 	public MeetingImpl(int meetingId, Set<Contact> meetingContacts, Calendar scheduledDate) {
 		this.meetingContacts = meetingContacts;
-		this.scheduledDate = scheduledDate;
+		this.date = scheduledDate;
 		this.meetingId = meetingId;
 	}
 	
@@ -21,7 +23,7 @@ public abstract class MeetingImpl implements Meeting, Comparable<Meeting> {
 
 	@Override
 	public Calendar getDate() {
-		return scheduledDate;
+		return date;
 	}
 
 	@Override
@@ -34,9 +36,31 @@ public abstract class MeetingImpl implements Meeting, Comparable<Meeting> {
 		if(this.getDate().equals(other.getDate())) {
 			return 0;
 		}
-		if (this.scheduledDate.before(other.getDate())) {
+		if (this.date.before(other.getDate())) {
 			return -1;
 		}
 		return 1;
-	}	
+	}
+	
+	@Override
+	public String toString() {
+		String dateStr = date.get(Calendar.YEAR) + CSV_SPLIT_STRING
+				+ date.get(Calendar.MONTH) + CSV_SPLIT_STRING
+				+ date.get(Calendar.DAY_OF_MONTH) + CSV_SPLIT_STRING
+				+ date.get(Calendar.HOUR_OF_DAY) + CSV_SPLIT_STRING
+				+ date.get(Calendar.MINUTE);
+		String result = meetingId + CSV_SPLIT_STRING + dateStr + CSV_SPLIT_STRING;	
+		if (this instanceof PastMeeting){
+			PastMeeting pastMeeting = (PastMeeting) this;
+			result += pastMeeting.getNotes() + CSV_SPLIT_STRING;
+		} else {
+			result += "" + CSV_SPLIT_STRING;
+		}
+		for (Contact contact: this.getContacts()) {
+			result += contact.getId() + CSV_SPLIT_STRING;
+		}
+		return result;
+	}
+	
+	
 }
