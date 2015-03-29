@@ -302,33 +302,12 @@ public class ContactManagerImpl implements ContactManager {
 			String[] contactToLoad;
 			while((line = in.readLine()) != null && !line.equals("meetings")) {
 				contactToLoad = line.split(CSV_SPLIT_STRING, -1);
-				int contactId = Integer.parseInt(contactToLoad[0]);
-				countContacts++;
-				contacts.add(new ContactImpl(contactId, contactToLoad[1], contactToLoad[2]));
+				createContactFromString(contactToLoad);
 			}
 			String[] meetingToLoad;
 			while((line = in.readLine()) != null) {
 				meetingToLoad = line.split(CSV_SPLIT_STRING, -1);
-				int meetingId = Integer.parseInt(meetingToLoad[0]);
-				Calendar meetingDate = new GregorianCalendar(
-						Integer.parseInt(meetingToLoad[1]),
-						Integer.parseInt(meetingToLoad[2]),
-						Integer.parseInt(meetingToLoad[3]),
-						Integer.parseInt(meetingToLoad[4]),
-						Integer.parseInt(meetingToLoad[5]));
-				String meetingNotes = meetingToLoad[6];
-				int numberOfContactsAtMtg = meetingToLoad.length - 8;
-				int[] meetingContactIds = new int[numberOfContactsAtMtg];
-				for(int i = 0; i < numberOfContactsAtMtg; i++) {
-					meetingContactIds[i] = Integer.parseInt(meetingToLoad[i+7]); 
-				}
-				Set<Contact> meetingContacts = getContacts(meetingContactIds);
-				countMeetings++;
-				if (dateIsInPast(meetingDate)) {
-					meetings.add(new PastMeetingImpl(meetingId, meetingContacts, meetingDate, meetingNotes));
-				} else {
-					meetings.add(new FutureMeetingImpl(meetingId, meetingContacts, meetingDate));
-				}
+				createMeetingFromString(meetingToLoad);
 			}
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
@@ -337,6 +316,35 @@ public class ContactManagerImpl implements ContactManager {
 		} finally {
 			closeReader(in);
 		}
+	}
+	
+	private void createContactFromString(String[] contactToLoad) {
+		int contactId = Integer.parseInt(contactToLoad[0]);
+		countContacts++;
+		contacts.add(new ContactImpl(contactId, contactToLoad[1], contactToLoad[2]));		
+	}
+
+	private void createMeetingFromString(String[] meetingToLoad) {
+		int meetingId = Integer.parseInt(meetingToLoad[0]);
+		Calendar meetingDate = new GregorianCalendar(
+				Integer.parseInt(meetingToLoad[1]),
+				Integer.parseInt(meetingToLoad[2]),
+				Integer.parseInt(meetingToLoad[3]),
+				Integer.parseInt(meetingToLoad[4]),
+				Integer.parseInt(meetingToLoad[5]));
+		String meetingNotes = meetingToLoad[6];
+		int numberOfContactsAtMtg = meetingToLoad.length - 8;
+		int[] meetingContactIds = new int[numberOfContactsAtMtg];
+		for(int i = 0; i < numberOfContactsAtMtg; i++) {
+			meetingContactIds[i] = Integer.parseInt(meetingToLoad[i+7]); 
+		}
+		Set<Contact> meetingContacts = getContacts(meetingContactIds);
+		countMeetings++;
+		if (dateIsInPast(meetingDate)) {
+			meetings.add(new PastMeetingImpl(meetingId, meetingContacts, meetingDate, meetingNotes));
+		} else {
+			meetings.add(new FutureMeetingImpl(meetingId, meetingContacts, meetingDate));
+		}		
 	}
 	
 	private void closeReader(Reader reader) {
