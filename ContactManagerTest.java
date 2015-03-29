@@ -20,8 +20,6 @@ public class ContactManagerTest {
 
 	@Before
 	public void setUpBeforeEachTest() {
-		//reset static countContacts to zero before each test
-		new ContactImpl(0);
 		//delete contacts.txt if it exists
 		File file = new File("./cw4/contacts.txt");
         if(file.exists()) {
@@ -781,10 +779,10 @@ public class ContactManagerTest {
 		firstCM.flush();
 		ContactManager secondCM = new ContactManagerImpl();
 		secondCM.addNewContact("Garry Gibbon", "gg notes");
-		Contact expected = new ContactImpl(19, "Garry Gibbon", "gg notes");
+		Contact expected = new ContactImpl(7, "Garry Gibbon", "gg notes");
 		Set<Contact> expectedContacts = new HashSet<Contact>();
 		expectedContacts.add(expected);
-		assertEquals(expectedContacts, secondCM.getContacts(19));
+		assertEquals(expectedContacts, secondCM.getContacts(7));
 		secondCM.flush();
 	}
 	
@@ -895,20 +893,6 @@ public class ContactManagerTest {
 	}	
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

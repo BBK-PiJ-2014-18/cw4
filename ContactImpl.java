@@ -1,42 +1,15 @@
 public class ContactImpl implements Contact {
 	
-	private static int countContacts;
 	private int contactId;
 	private String contactName;
 	private String contactNotes;
 	
-	static {
-		countContacts = 0;
-	}
-	
-	/**
-	 * Constructor that resets countContacts for JUnit tests
-	 * TODO: finish these notes
-	 */	
-	
-	public ContactImpl(int resetCountContacts) {
-		countContacts = 0;
-	}
-	
-	/**
-	 * Constructor that generates ID, used by ContactManager.
-	 * TODO: finish these notes
-	 */	
-	
-	public ContactImpl(String name, String notes) {
-		countContacts++;
-		this.contactId = countContacts;
-		this.contactName = name;
-		this.contactNotes = notes;
-	}
-		
 	/**
 	 * Constructor that accepts ID as parameter used to create duplicate contacts
 	 * to enable testing of ContactManager.
 	 */	
 	
 	public ContactImpl(int contactId, String name, String notes) {
-		countContacts++;
 		this.contactId = contactId;
 		this.contactName = name;
 		this.contactNotes = notes;

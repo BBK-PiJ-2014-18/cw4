@@ -22,7 +22,7 @@ public class ContactManagerImpl implements ContactManager {
 	
 	private Set<Contact> contacts;
 	private SortedSet<Meeting> meetings;
-//	private int countContacts;
+	private int countContacts;
 	private int countMeetings;
 	private long daysToAddToClockForTesting;
 	
@@ -32,10 +32,9 @@ public class ContactManagerImpl implements ContactManager {
 	 */	
 	
 	public ContactManagerImpl() {
-//		new ContactImpl(0);			//reset the static id counter countContacts ? will break if multi cms running??
 		this.contacts = new HashSet<Contact>();
 		this.meetings = new TreeSet<Meeting>();
-//		this.countContacts = 0;
+		this.countContacts = 0;
 		this.countMeetings = 0;
 		this.daysToAddToClockForTesting = 0;
 		loadRecords();
@@ -48,10 +47,9 @@ public class ContactManagerImpl implements ContactManager {
 	 * @param daysToAddToClockForTesting
 	 */
 	public ContactManagerImpl(long daysToAddToClockForTesting) {
-		new ContactImpl(0);			//reset the static id counter countContacts
 		this.contacts = new HashSet<Contact>();
 		this.meetings = new TreeSet<Meeting>();
-//		this.countContacts = 0;
+		this.countContacts = 0;
 		this.countMeetings = 0;
 		this.daysToAddToClockForTesting = daysToAddToClockForTesting;
 		loadRecords();
@@ -207,10 +205,9 @@ public class ContactManagerImpl implements ContactManager {
 		if(name == "") {
 			throw new IllegalArgumentException("Name may not be empty string"); 
 		}
-//		countContacts++;
-//		int contactId = countContacts;
-//		contacts.add(new ContactImpl(contactId, name, notes));
-		contacts.add(new ContactImpl(name, notes));
+		countContacts++;
+		int contactId = countContacts;
+		contacts.add(new ContactImpl(contactId, name, notes));
 	}
 
 	@Override
@@ -308,10 +305,8 @@ public class ContactManagerImpl implements ContactManager {
 			while((line = in.readLine()) != null && !line.equals("meetings")) {
 				contactToLoad = line.split(",", -1);
 				int contactId = Integer.parseInt(contactToLoad[0]);
-//				countContacts++;
+				countContacts++;
 				contacts.add(new ContactImpl(contactId, contactToLoad[1], contactToLoad[2]));
-//				contacts.add(new ContactImpl(contactToLoad[1], contactToLoad[2]));
-	//			}
 			}
 			String[] meetingToLoad;
 			while((line = in.readLine()) != null) {
@@ -389,6 +384,4 @@ public class ContactManagerImpl implements ContactManager {
 			throw new IllegalArgumentException("Contact unknown");
 		}
 	}
-
-
 }
