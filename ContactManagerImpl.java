@@ -113,20 +113,24 @@ public class ContactManagerImpl implements ContactManager {
 	}
 
 	/**
-	* Returns meetings that happen at a time in the future, they may be of the 
-	* type FutureMeeting or PastMeeting. 
+	* Returns meetings that happen at a time in the future, only future meetings can have
+	* a date in the future. 
 	*/	
 	
 	@Override
 	public List<Meeting> getFutureMeetingList(Contact contact) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Meeting> result = new LinkedList<Meeting>();
+		for (Meeting mtg: meetings) {
+			if(mtg.getContacts().contains(contact) && !dateIsInPast(mtg.getDate())) {
+				result.add(mtg);
+			}	
+		}
+		return result;
 	}
 
 	/**
-	* Meetings that happen on this day may be of the type FutureMeeting
-	* or PastMeeting (the method returns meetings on the specified day 
-	* regardless of type). 
+	* Meetings that happen on this day (which may be past or future) may be of the type FutureMeeting
+	* or PastMeeting (the method returns meetings on the specified day regardless of type). 
 	* 
 	* @throws IllegalArgumentException if date does not include a specific day.
 	*/	
