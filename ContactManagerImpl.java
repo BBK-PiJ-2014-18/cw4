@@ -125,12 +125,15 @@ public class ContactManagerImpl implements ContactManager {
 	*/	
 	@Override
 	public List<Meeting> getFutureMeetingList(Contact contact) {
-		migrateFutureMeetings();
 		if(!this.contacts.contains(contact)) {
 			throw new IllegalArgumentException("Contact unknown");
 		}
+		//any FutureMeetings with a date in past are migrated to PastMeetings
+		migrateFutureMeetings();
 		List<Meeting> result = new LinkedList<Meeting>();
 		for (Meeting mtg: meetings) {
+			//as meetings is a SortedSet with compareTo overridden for date order the meetings
+			//are added to result in chronological order.
 			if(mtg.getContacts().contains(contact) && !dateIsInPast(mtg.getDate())) {
 				result.add(mtg);
 			}	
@@ -145,9 +148,12 @@ public class ContactManagerImpl implements ContactManager {
 	
 	@Override
 	public List<Meeting> getFutureMeetingList(Calendar date) {
+		//any FutureMeetings with a date in past are migrated to PastMeetings
 		migrateFutureMeetings();
 		List<Meeting> result = new LinkedList<Meeting>();
 		for (Meeting mtg: meetings) {
+			//as meetings is a SortedSet with compareTo overridden for date order the meetings
+			//are added to result in chronological order.
 			if(mtg.getDate().get(Calendar.YEAR) == date.get(Calendar.YEAR)
 					&& mtg.getDate().get(Calendar.MONTH) == date.get(Calendar.MONTH)
 					&& mtg.getDate().get(Calendar.DAY_OF_MONTH) == date.get(Calendar.DAY_OF_MONTH)) {
@@ -163,19 +169,21 @@ public class ContactManagerImpl implements ContactManager {
 		if(!this.contacts.contains(contact)) {
 			throw new IllegalArgumentException("Contact unknown");
 		}
+		//any FutureMeetings with a date in past are migrated to PastMeetings
 		migrateFutureMeetings();
 		List<PastMeeting> result = new LinkedList<PastMeeting>();
 		for (Meeting mtg: meetings) {
+			//as meetings is a SortedSet with compareTo overridden for date order the meetings
+			//are added to result in chronological order.
 			if(mtg.getContacts().contains(contact) && dateIsInPast(mtg.getDate())) {
-					result.add((PastMeeting) mtg);
+				result.add((PastMeeting) mtg);
 			}	
 		}
 		return result;
 	}
 
 	@Override
-	public void addNewPastMeeting(Set<Contact> contacts, Calendar date,
-			String text) {
+	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) {
 		if (contacts == null || date == null || text == null) {
 			throw new NullPointerException("NewPastMeeting arguments may not be null");
 		}
@@ -205,10 +213,13 @@ public class ContactManagerImpl implements ContactManager {
 		if(!dateIsInPast(mtg.getDate())) {
 			throw new IllegalStateException("Meeting is in the future");
 		}
+		//remove the meeting from CM
 		meetings.remove(mtg);
+		//if the meeting is already a PastMeeting, add the text to any existing notes
 		if (mtg instanceof PastMeeting){
 			text = ((PastMeeting) mtg).getNotes() + text;
 		}
+		//the add it back as a PastMeeting
 		meetings.add(new PastMeetingImpl(id, mtg.getContacts(), mtg.getDate(), text));
 	}
 
@@ -217,7 +228,7 @@ public class ContactManagerImpl implements ContactManager {
 		if(name == null || notes == null) {
 			throw new NullPointerException("Name/Notes may not be null");
 		}
-		//as some methods search contacts by name do not allow empty string
+		//as some methods search contacts by name do not allow empty string however
 		//notes may be empty string as not searched for (and we have feature to add later)
 		if(name == "") {
 			throw new IllegalArgumentException("Name may not be empty string"); 
@@ -231,12 +242,12 @@ public class ContactManagerImpl implements ContactManager {
 	public Set<Contact> getContacts(int... ids) {
 		Set<Contact> result = new HashSet<Contact>();
 		boolean idFound;
-		for(int nextId: ids) {
+		for(int id: ids) {
 			idFound = false;
 			for (Contact contact: contacts) {
-				if(contact.getId() == nextId) {
-					result.add(contact);
+				if(contact.getId() == id) {
 					idFound = true;
+					result.add(contact);
 					break;
 				}
 			}
@@ -297,11 +308,13 @@ public class ContactManagerImpl implements ContactManager {
 			if(!(line = in.readLine()).equals("contacts")) {
 				throw new IllegalStateException("Data File has error");
 			};
+			//load the contacts
 			String[] contactToLoad;
 			while((line = in.readLine()) != null && !line.equals("meetings")) {
 				contactToLoad = line.split(CSV_SPLIT_STRING, -1);
 				createContactFromString(contactToLoad);
 			}
+			//load the meetings
 			String[] meetingToLoad;
 			while((line = in.readLine()) != null) {
 				meetingToLoad = line.split(CSV_SPLIT_STRING, -1);
@@ -316,12 +329,21 @@ public class ContactManagerImpl implements ContactManager {
 		}
 	}
 	
+	/**
+	 *Creates a contact in ContactManager based on the array 
+	 * @param contactToLoad
+	 */
+	
 	private void createContactFromString(String[] contactToLoad) {
 		int contactId = Integer.parseInt(contactToLoad[0]);
 		countContacts++;
 		contacts.add(new ContactImpl(contactId, contactToLoad[1], contactToLoad[2]));		
 	}
-
+	
+	/**
+	*Creates a meeting in ContactManager based on the array 
+	*@param meetingToLoad 
+	**/
 	private void createMeetingFromString(String[] meetingToLoad) {
 		int meetingId = Integer.parseInt(meetingToLoad[0]);
 		Calendar meetingDate = new GregorianCalendar(
@@ -345,6 +367,11 @@ public class ContactManagerImpl implements ContactManager {
 		}		
 	}
 	
+	/**
+	 * Closes the reader
+	 * @param reader
+	 */
+	
 	private void closeReader(Reader reader) {
 		try {
 			if(reader != null) {
@@ -367,12 +394,23 @@ public class ContactManagerImpl implements ContactManager {
 		return LocalDateTime.now().plusDays(daysToAddToClockForTesting);
 	}	
 	
+	/**
+	 * Transforms the format of date
+	 * @param date in Calendar format
+	 * @return the same date in LocalDateTime format
+	 */
+	
 	private LocalDateTime convertDateFormat(Calendar date) {
 		GregorianCalendar gcDate = (GregorianCalendar) date;
 		ZonedDateTime zdtDate = gcDate.toZonedDateTime();
 		return zdtDate.toLocalDateTime();
 	}
 	
+	/**
+	 * Check whether the date provided is in the past
+	 * @param date to be checked
+	 * @return true if date is in past, otherwise false
+	 */
 	private boolean dateIsInPast(Calendar date) {
 		LocalDateTime checkDate = convertDateFormat(date);
 		return (checkDate.isBefore(getNow()));		
@@ -395,7 +433,6 @@ public class ContactManagerImpl implements ContactManager {
 	/**
 	* Migrates any FutureMeetings with a date in the past into PastMeetings  
 	*/
-	
 	private void migrateFutureMeetings() {
 		List<FutureMeeting> migrateList = new LinkedList<FutureMeeting>();
 		for (Meeting mtg: meetings) {

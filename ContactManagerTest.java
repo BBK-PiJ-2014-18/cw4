@@ -195,7 +195,7 @@ public class ContactManagerTest {
 		cm.addNewContact("Anna Kingsbury", "ak notes");
 		cm.addNewContact("Brian Kingsbury", "bk notes");
 		cm.addNewContact("Cathy Kingsbury", "ck notes");
-		Set<Contact> actual = cm.getContacts(4);
+		cm.getContacts(4);
 	}
 	
 	@Test
@@ -268,14 +268,14 @@ public class ContactManagerTest {
 		ContactManager cm = new ContactManagerImpl();
 		cm.addNewContact("Kingsbury", "k notes");
 		String nullString = null;
-		Set<Contact> actual = cm.getContacts(nullString);
+		cm.getContacts(nullString);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testErrorHandleGetContactsByEmptyString () {
 		ContactManager cm = new ContactManagerImpl();
 		cm.addNewContact("Kingsbury", "k notes");
-		Set<Contact> actual = cm.getContacts("");
+		cm.getContacts("");
 	}
 	
 	//MEETING TESTS START HERE
@@ -410,18 +410,6 @@ public class ContactManagerTest {
 		thrown.expectMessage("Meeting with that ID is in the past");	
 		cm.getFutureMeeting(2);
 	}	
-	
-	//is this logic required?  or can return a mtg as long as type is OK (regardless of date)
-	@Ignore @Test
-	public void testGetFutureMeetingExceptionWhenMtgIdIsMtgWITH_DATEInPast() {
-		//need contact.txt in place to build this test
-	}
-
-	//is this logic required?  or can return a mtg as long as type is OK
-	@Ignore @Test
-	public void testGetPastMeetingExceptionWhenMtgIdIsMtgWITH_DATEInFuture() {
-		//need contact.txt in place to build this test
-	}
 	
 	//exception handling on addFutureMeeting
 	
@@ -584,9 +572,7 @@ public class ContactManagerTest {
 		thrown.expectMessage("Date may not be in future");
 		cm.addNewPastMeeting(contacts, date, "notes");
 	}
-	
-	
-	
+		
 	@Test
 	public void testAddNewPastMeetingExceptionOnNotesNull() {
 		ContactManager cm = new ContactManagerImpl();
@@ -677,7 +663,6 @@ public class ContactManagerTest {
 		assertEquals(secondContacts, actual.get(1).getContacts());
 		assertEquals(thirdContacts, actual.get(2).getContacts());
 	}
-
 
 	@Test
 	public void testGetFutureMeetingListWithTodayDate() {
@@ -1091,7 +1076,7 @@ public class ContactManagerTest {
 	}
 
 	//This test passes but is ignored as takes 61 seconds to run as need to wait
-	//a minute between creating mtgs as they cannot have same time (which is to the minute).
+	//a minute between creating mtgs.
 	@Ignore @Test
 	public void testGetPastMeetingListByContactMigrateTwoFutureMeetings() {
 		ContactManager cm = new ContactManagerImpl();
@@ -1192,13 +1177,3 @@ public class ContactManagerTest {
 	}
 	
 }
-
-
-
-
-
-
-
-
-
-
