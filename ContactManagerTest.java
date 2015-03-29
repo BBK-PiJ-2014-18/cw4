@@ -1028,6 +1028,34 @@ public class ContactManagerTest {
 		thrown.expectMessage("Contact unknown");
 		cm.getFutureMeetingList(nullcontact);	
 	}
+
+	@Test
+	public void testGetPastMeetingListByContactFirstElements() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Set<Contact> k1MtgContacts = new HashSet<Contact>();
+		k1MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		k1MtgContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		Calendar k1MtgDate = new GregorianCalendar(2000, 8, 15, 00, 22);
+		cm.addNewPastMeeting(k1MtgContacts, k1MtgDate, "notes");
+		Set<Contact> k2MtgContacts = new HashSet<Contact>();
+		k2MtgContacts.add(new ContactImpl(6, "Cathy Jones", "cj notes"));
+		k2MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		Calendar k2MtgDate = new GregorianCalendar(2001, 8, 15, 00, 22);
+		cm.addNewPastMeeting(k2MtgContacts, k2MtgDate, "notes");
+		Set<Contact> k3MtgContacts = new HashSet<Contact>();
+		k3MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		Calendar k3MtgDate = new GregorianCalendar(2001, 2, 15, 11, 22);
+		cm.addNewPastMeeting(k3MtgContacts, k3MtgDate, "notes");
+		Contact anna = new ContactImpl(1, "Anna Kingsbury", "ak notes");
+		List<PastMeeting> actual = cm.getPastMeetingList(anna);
+		assertEquals(3, actual.size());
+		assertEquals(k1MtgContacts, actual.get(0).getContacts());
+		assertEquals(k3MtgContacts, actual.get(1).getContacts());
+		assertEquals(k2MtgContacts, actual.get(2).getContacts());
+	}
+
+
 }
 
 
