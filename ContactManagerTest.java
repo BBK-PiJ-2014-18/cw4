@@ -1074,20 +1074,67 @@ public class ContactManagerTest {
 		Calendar k3MtgDate = new GregorianCalendar(2001, 2, 15, 11, 22);
 		cm.addNewPastMeeting(k3MtgContacts, k3MtgDate, "notes");
 		Contact anna = new ContactImpl(1, "Anna Kingsbury", "ak notes");
-		cm.addFutureMeeting(k3MtgContacts, Calendar.getInstance());
+		Calendar justInFuture = Calendar.getInstance();
+		justInFuture.roll(Calendar.SECOND, 1);//make plus one second
+		cm.addFutureMeeting(k3MtgContacts, justInFuture);
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		} catch (InterruptedException ex) {
 			ex.printStackTrace();
 		}
 		List<PastMeeting> actual = cm.getPastMeetingList(anna);
 		assertEquals(4, actual.size());
-		assertEquals(k3MtgContacts, actual.get(0).getContacts());
-		assertEquals(k1MtgContacts, actual.get(1).getContacts());
-		assertEquals(k3MtgContacts, actual.get(2).getContacts());
-		assertEquals(k2MtgContacts, actual.get(3).getContacts());
+		assertEquals(k1MtgContacts, actual.get(0).getContacts());
+		assertEquals(k3MtgContacts, actual.get(1).getContacts());
+		assertEquals(k2MtgContacts, actual.get(2).getContacts());
+		assertEquals(k3MtgContacts, actual.get(3).getContacts());
 	}
 
+	//This test passes but is ignored as takes 61 seconds to run as need to wait
+	//a minute between creating mtgs as they cannot have same time (which is to the minute).
+	@Ignore @Test
+	public void testGetPastMeetingListByContactMigrateTwoFutureMeetings() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Set<Contact> k1MtgContacts = new HashSet<Contact>();
+		k1MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		k1MtgContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		Calendar k1MtgDate = new GregorianCalendar(2000, 8, 15, 00, 22);
+		cm.addNewPastMeeting(k1MtgContacts, k1MtgDate, "notes");
+		Set<Contact> k2MtgContacts = new HashSet<Contact>();
+		k2MtgContacts.add(new ContactImpl(6, "Cathy Jones", "cj notes"));
+		k2MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		Calendar k2MtgDate = new GregorianCalendar(2001, 8, 15, 00, 22);
+		cm.addNewPastMeeting(k2MtgContacts, k2MtgDate, "notes");
+		Set<Contact> k3MtgContacts = new HashSet<Contact>();
+		k3MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		Calendar k3MtgDate = new GregorianCalendar(2001, 2, 15, 11, 22);
+		cm.addNewPastMeeting(k3MtgContacts, k3MtgDate, "notes");
+		Contact anna = new ContactImpl(1, "Anna Kingsbury", "ak notes");
+		Calendar justInFuture = Calendar.getInstance();
+		justInFuture.roll(Calendar.SECOND, 1);//make plus one second
+		cm.addFutureMeeting(k3MtgContacts, justInFuture);
+		try {
+			Thread.sleep(61000);
+		} catch (InterruptedException ex) {
+			ex.printStackTrace();
+		}
+		Calendar justInFuture2 = Calendar.getInstance();
+		justInFuture2.roll(Calendar.SECOND, 1);//make plus one second
+		cm.addFutureMeeting(k1MtgContacts, justInFuture2);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException ex) {
+			ex.printStackTrace();
+		}
+		List<PastMeeting> actual = cm.getPastMeetingList(anna);
+		assertEquals(5, actual.size());
+		assertEquals(k1MtgContacts, actual.get(0).getContacts());
+		assertEquals(k3MtgContacts, actual.get(1).getContacts());
+		assertEquals(k2MtgContacts, actual.get(2).getContacts());
+		assertEquals(k3MtgContacts, actual.get(3).getContacts());
+		assertEquals(k1MtgContacts, actual.get(4).getContacts());
+	}
 }
 
 

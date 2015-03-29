@@ -157,11 +157,11 @@ public class ContactManagerImpl implements ContactManager {
 	
 	@Override
 	public List<PastMeeting> getPastMeetingList(Contact contact) {
+		migrateFutureMeetings();
 		List<PastMeeting> result = new LinkedList<PastMeeting>();
 		for (Meeting mtg: meetings) {
 			if(mtg.getContacts().contains(contact) && dateIsInPast(mtg.getDate())) {
-				//will need to migrate future mtgs with date in past here
-				result.add((PastMeeting) mtg);
+					result.add((PastMeeting) mtg);
 			}	
 		}
 		return result;
@@ -394,6 +394,22 @@ public class ContactManagerImpl implements ContactManager {
 		}	
 		if(!this.contacts.containsAll(contacts)) {
 			throw new IllegalArgumentException("Contact unknown");
+		}
+	}
+	
+	/**
+	* Migrates any FutureMeetings with a date in the past into PastMeetings  
+	*/
+	
+	private void migrateFutureMeetings() {
+		List<FutureMeeting> migrateList = new LinkedList<FutureMeeting>();
+		for (Meeting mtg: meetings) {
+			if(mtg instanceof FutureMeeting && dateIsInPast(mtg.getDate())) {
+				migrateList.add((FutureMeeting) mtg);
+			}	
+		}
+		while (migrateList.size() != 0) {
+			addMeetingNotes(migrateList.remove(0).getId(), "");
 		}
 	}
 }
