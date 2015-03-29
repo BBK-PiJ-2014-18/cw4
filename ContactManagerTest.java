@@ -920,12 +920,75 @@ public class ContactManagerTest {
 		assertEquals(k1MtgContacts, actual.get(1).getContacts());
 		assertEquals(k3MtgContacts, actual.get(2).getContacts());
 		assertEquals(k2MtgContacts, actual.get(3).getContacts());
-		
 	}
-
-
-
-
+	
+	@Test
+	public void testGetFutureMeetingListByContactDoesNotReturnMeetingInPast() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Set<Contact> k1MtgContacts = new HashSet<Contact>();
+		k1MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		k1MtgContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		Calendar k1MtgDate = new GregorianCalendar(2015, 8, 15, 00, 22);
+		cm.addFutureMeeting(k1MtgContacts, k1MtgDate);
+		Set<Contact> k2MtgContacts = new HashSet<Contact>();
+		k2MtgContacts.add(new ContactImpl(6, "Cathy Jones", "cj notes"));
+		k2MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		Calendar k2MtgDate = new GregorianCalendar(2016, 8, 15, 00, 22);
+		cm.addFutureMeeting(k2MtgContacts, k2MtgDate);
+		Set<Contact> k3MtgContacts = new HashSet<Contact>();
+		k3MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		Calendar k3MtgDate = new GregorianCalendar(2016, 2, 15, 11, 22);
+		cm.addFutureMeeting(k3MtgContacts, k3MtgDate);
+		Set<Contact> k4MtgContacts = new HashSet<Contact>();
+		k4MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		k4MtgContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		k4MtgContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));
+		Contact anna = new ContactImpl(1, "Anna Kingsbury", "ak notes");
+		cm.addNewPastMeeting(k3MtgContacts, new GregorianCalendar(1999, 9, 9, 9, 9), "notes");
+		List<Meeting> actual = cm.getFutureMeetingList(anna);
+		assertEquals(4, actual.size());
+		assertEquals(k4MtgContacts, actual.get(0).getContacts());
+		assertEquals(k1MtgContacts, actual.get(1).getContacts());
+		assertEquals(k3MtgContacts, actual.get(2).getContacts());
+		assertEquals(k2MtgContacts, actual.get(3).getContacts());
+	}
+	
+	@Test
+	public void testGetFutureMeetingListByContactIncludesMeetingHappeningLaterToday() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Set<Contact> k1MtgContacts = new HashSet<Contact>();
+		k1MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		k1MtgContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		Calendar k1MtgDate = new GregorianCalendar(2015, 8, 15, 00, 22);
+		cm.addFutureMeeting(k1MtgContacts, k1MtgDate);
+		Set<Contact> k2MtgContacts = new HashSet<Contact>();
+		k2MtgContacts.add(new ContactImpl(6, "Cathy Jones", "cj notes"));
+		k2MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		Calendar k2MtgDate = new GregorianCalendar(2016, 8, 15, 00, 22);
+		cm.addFutureMeeting(k2MtgContacts, k2MtgDate);
+		Set<Contact> k3MtgContacts = new HashSet<Contact>();
+		k3MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		Calendar k3MtgDate = new GregorianCalendar(2016, 2, 15, 11, 22);
+		cm.addFutureMeeting(k3MtgContacts, k3MtgDate);
+		Set<Contact> k4MtgContacts = new HashSet<Contact>();
+		k4MtgContacts.add(new ContactImpl(1, "Anna Kingsbury", "ak notes"));
+		k4MtgContacts.add(new ContactImpl(2, "Brian Kingsbury", "bk notes"));
+		k4MtgContacts.add(new ContactImpl(3, "Cathy Kingsbury", "ck notes"));
+		Contact anna = new ContactImpl(1, "Anna Kingsbury", "ak notes");
+		Calendar today = Calendar.getInstance();
+		Calendar endOfToday = new GregorianCalendar(today.get(Calendar.YEAR), today.get(Calendar.MONTH), 
+				today.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+		cm.addFutureMeeting(k3MtgContacts, endOfToday);
+		List<Meeting> actual = cm.getFutureMeetingList(anna);
+		assertEquals(5, actual.size());
+		assertEquals(k3MtgContacts, actual.get(0).getContacts());
+		assertEquals(k4MtgContacts, actual.get(1).getContacts());
+		assertEquals(k1MtgContacts, actual.get(2).getContacts());
+		assertEquals(k3MtgContacts, actual.get(3).getContacts());
+		assertEquals(k2MtgContacts, actual.get(4).getContacts());
+	}
 
 }
 
