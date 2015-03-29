@@ -1175,6 +1175,22 @@ public class ContactManagerTest {
 		cm.getPastMeetingList(nullcontact);	
 	}
 
+	//change flush and load to csv based on "," rather than just ,
+	
+	@Test
+	public void testCanDealWithCommaWhenAddWriteAndReadContactsTxt() {
+		ContactManager firstCM = new ContactManagerImpl();
+		helpAddContactsAndMeetings(firstCM);
+		firstCM.addNewContact("Garry, Gibbon", "a comma, that works");
+		firstCM.flush();
+		ContactManager secondCM = new ContactManagerImpl();
+		Contact expected = new ContactImpl(7, "Garry, Gibbon", "a comma, that works");
+		Set<Contact> expectedContacts = new HashSet<Contact>();
+		expectedContacts.add(expected);
+		assertEquals(expectedContacts, secondCM.getContacts(7));
+		secondCM.flush();
+	}
+	
 }
 
 
