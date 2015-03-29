@@ -990,6 +990,47 @@ public class ContactManagerTest {
 		assertEquals(k2MtgContacts, actual.get(4).getContacts());
 	}
 
+	@Test
+	public void testGetFutureMeetingListReturnsEmptyListIfContactExistsNoMtgs() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		cm.addNewContact("Jane Kingsbury", "jk notes");
+		Contact jane = new ContactImpl(7, "Jane Kingsbury", "jk notes");
+		List<Meeting> actual =cm.getFutureMeetingList(jane);
+		assertEquals(0, actual.size());
+	}
+	
+	@Test
+	public void testGetFutureMeetingListReturnsEmptyListIfContactExistsOnlyPastMeetings() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Contact jane = new ContactImpl(4, "Anna xJones", "aj notes");
+		List<Meeting> actual =cm.getFutureMeetingList(jane);
+		assertEquals(0, actual.size());
+	}
+	
+	
+	@Test
+	public void testGetFutureMeetingListExceptionOnContactThatDoesNotExist() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Contact jane = new ContactImpl(99, "Jane Kingsbury", "jk notes");
+		cm.getFutureMeetingList(jane);
+		
+	}
+	
+	@Test
+	public void testGetFutureMeetingListExceptionOnContactIsNull() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Contact nullcontact = null;
+		cm.getFutureMeetingList(nullcontact);
+		
+	}
+	
+	
+	
+	
 }
 
 
