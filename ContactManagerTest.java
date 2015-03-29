@@ -1014,9 +1014,9 @@ public class ContactManagerTest {
 		ContactManager cm = new ContactManagerImpl();
 		helpAddContactsAndMeetings(cm);
 		Contact jane = new ContactImpl(99, "Jane Kingsbury", "jk notes");
-		cm.getFutureMeetingList(jane);
 		thrown.expect(IllegalArgumentException.class);
-		thrown.expectMessage("Contact does not exist");
+		thrown.expectMessage("Contact unknown");
+		cm.getFutureMeetingList(jane);
 	}
 	
 	@Test
@@ -1024,9 +1024,9 @@ public class ContactManagerTest {
 		ContactManager cm = new ContactManagerImpl();
 		helpAddContactsAndMeetings(cm);
 		Contact nullcontact = null;
-		cm.getFutureMeetingList(nullcontact);		
-		thrown.expect(NullPointerException.class);
-		thrown.expectMessage("Contact may not be null");
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Contact unknown");
+		cm.getFutureMeetingList(nullcontact);	
 	}
 }
 

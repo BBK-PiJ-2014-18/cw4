@@ -116,9 +116,11 @@ public class ContactManagerImpl implements ContactManager {
 	* Returns meetings that happen at a time in the future, only future meetings can have
 	* a date in the future. 
 	*/	
-	
 	@Override
 	public List<Meeting> getFutureMeetingList(Contact contact) {
+		if(!this.contacts.contains(contact)) {
+			throw new IllegalArgumentException("Contact unknown");
+		}
 		List<Meeting> result = new LinkedList<Meeting>();
 		for (Meeting mtg: meetings) {
 			if(mtg.getContacts().contains(contact) && !dateIsInPast(mtg.getDate())) {
