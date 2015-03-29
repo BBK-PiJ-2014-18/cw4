@@ -157,6 +157,9 @@ public class ContactManagerImpl implements ContactManager {
 	
 	@Override
 	public List<PastMeeting> getPastMeetingList(Contact contact) {
+		if(!this.contacts.contains(contact)) {
+			throw new IllegalArgumentException("Contact unknown");
+		}
 		migrateFutureMeetings();
 		List<PastMeeting> result = new LinkedList<PastMeeting>();
 		for (Meeting mtg: meetings) {
