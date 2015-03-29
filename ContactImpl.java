@@ -7,10 +7,13 @@ public class ContactImpl implements Contact {
 	private String contactNotes;
 	
 	/**
-	 * Constructor that accepts ID as parameter used to create duplicate contacts
-	 * to enable testing of ContactManager.
-	 */	
-	
+	 * Constructor that deals with ID, name and notes.
+	 * Contacts can only be added to ContactManager by methods that generate a unique CM ID using
+	 * the appropriate method in ContactManager.  It is that ID that is passed to this constructor. 
+	 * @param contactId
+	 * @param name
+	 * @param notes
+	 */
 	public ContactImpl(int contactId, String name, String notes) {
 		this.contactId = contactId;
 		this.contactName = name;

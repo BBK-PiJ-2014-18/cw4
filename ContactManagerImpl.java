@@ -29,7 +29,6 @@ public class ContactManagerImpl implements ContactManager {
 	
 	/**
 	 * Normal, in use, constructor. Time will be as 'real world'.
-	 * Only use other constructor for special testing requiring 'fake' future scenarios.
 	 */	
 	
 	public ContactManagerImpl() {
@@ -69,6 +68,7 @@ public class ContactManagerImpl implements ContactManager {
 		countMeetings++;
 		int meetingId = countMeetings;
 		Meeting meetingToAdd = new FutureMeetingImpl(meetingId, contacts, date);
+		//contains uses compareTo() which is overridden so based on date
 		if (meetings.contains(meetingToAdd)) {
 			countMeetings--;
 			throw new IllegalArgumentException("Meeting already exists at that date/time");
@@ -79,10 +79,12 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public PastMeeting getPastMeeting(int id) {
+		//any FutureMeetings with a date in past are migrated to PastMeetings
 		migrateFutureMeetings();
 		for(Meeting mtg: meetings) {
 			if (mtg.getId() == id) {
 				if (mtg instanceof FutureMeeting){
+					//if this is a FutureMeeting the date must be in the future
 					throw new IllegalArgumentException("Meeting with that ID is in the future");
 				}				
 				return (PastMeeting) mtg;
@@ -93,10 +95,12 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public FutureMeeting getFutureMeeting(int id) {
+		//any FutureMeetings with a date in past are migrated to PastMeetings
 		migrateFutureMeetings();
 		for(Meeting mtg: meetings) {
 			if (mtg.getId() == id) {
 				if (mtg instanceof PastMeeting){
+					//if this is a PastMeeting the date must be in the past
 					throw new IllegalArgumentException("Meeting with that ID is in the past");
 				}
 				return (FutureMeeting) mtg;
@@ -117,7 +121,7 @@ public class ContactManagerImpl implements ContactManager {
 
 	/**
 	* Returns meetings that happen at a time in the future, only future meetings can have
-	* a date in the future. 
+	* a date in the future. Any CM FutureMeetings with a date in the past are migrated to PastMeetings. 
 	*/	
 	@Override
 	public List<Meeting> getFutureMeetingList(Contact contact) {
@@ -137,8 +141,6 @@ public class ContactManagerImpl implements ContactManager {
 	/**
 	* Meetings that happen on this day (which may be past or future) may be of the type FutureMeeting
 	* or PastMeeting (the method returns meetings on the specified day regardless of type). 
-	* 
-	* @throws IllegalArgumentException if date does not include a specific day.
 	*/	
 	
 	@Override
@@ -155,10 +157,6 @@ public class ContactManagerImpl implements ContactManager {
 		return result;
 	}
 
-	/**
-	* Returned list includes meetings of the type PastMeeting, even if they happen on a future date. 
-	* List does not include meetings of the type FutureMeeting, even if they have a date in the past. 
-	*/
 	
 	@Override
 	public List<PastMeeting> getPastMeetingList(Contact contact) {
@@ -380,6 +378,11 @@ public class ContactManagerImpl implements ContactManager {
 		return (checkDate.isBefore(getNow()));		
 	}
 	
+	/**
+	 * Checks that at least one contact has been provided and that all contacts provided
+	 * exist in ContactManager.
+	 * @param contacts, the set of contacts to be checked
+	 */
 	private void checkContacts(Set<Contact> contacts) {
 		if(contacts.size() == 0) {
 			throw new IllegalArgumentException("Contact Set Empty");

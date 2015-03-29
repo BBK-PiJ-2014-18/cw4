@@ -1,7 +1,6 @@
 import java.util.Calendar;
 import java.util.Set;
 
-
 public abstract class MeetingImpl implements Meeting, Comparable<Meeting> {
 
 	private static final String CSV_SPLIT_STRING = "\",\"";
@@ -10,6 +9,15 @@ public abstract class MeetingImpl implements Meeting, Comparable<Meeting> {
 	private Calendar date;
 	private Set<Contact> meetingContacts;
 	
+	/**
+	 * Constructor in Abstract Class deals with ID, Contacts and Date for all types of meeting.
+	 * Meetings can only be added to ContactManager by methods that generate a unique CM ID using
+	 * the appropriate method in ContactManager.  It is that ID that is passed to this constructor. 
+	 * 
+	 * @param meetingId
+	 * @param meetingContacts
+	 * @param scheduledDate
+	 */
 	public MeetingImpl(int meetingId, Set<Contact> meetingContacts, Calendar scheduledDate) {
 		this.meetingContacts = meetingContacts;
 		this.date = scheduledDate;
@@ -31,6 +39,9 @@ public abstract class MeetingImpl implements Meeting, Comparable<Meeting> {
 		return meetingContacts;
 	}
 
+	/**
+	 * Meetings are compared by chronological date.
+	 */	
 	@Override
 	public int compareTo(Meeting other) {
 		if(this.getDate().equals(other.getDate())) {
@@ -42,6 +53,9 @@ public abstract class MeetingImpl implements Meeting, Comparable<Meeting> {
 		return 1;
 	}
 	
+	/**
+	 * @Return a string in the appropriate format for saving in the ContactManger csv file.
+	 */
 	@Override
 	public String toString() {
 		String dateStr = date.get(Calendar.YEAR) + CSV_SPLIT_STRING
@@ -61,6 +75,4 @@ public abstract class MeetingImpl implements Meeting, Comparable<Meeting> {
 		}
 		return result;
 	}
-	
-	
 }
