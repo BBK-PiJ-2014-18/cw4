@@ -157,8 +157,14 @@ public class ContactManagerImpl implements ContactManager {
 	
 	@Override
 	public List<PastMeeting> getPastMeetingList(Contact contact) {
-		// TODO Auto-generated method stub
-		return null;
+		List<PastMeeting> result = new LinkedList<PastMeeting>();
+		for (Meeting mtg: meetings) {
+			if(mtg.getContacts().contains(contact) && dateIsInPast(mtg.getDate())) {
+				//will need to migrate future mtgs with date in past here
+				result.add((PastMeeting) mtg);
+			}	
+		}
+		return result;
 	}
 
 	@Override
