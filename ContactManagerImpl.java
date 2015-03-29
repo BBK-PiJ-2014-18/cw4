@@ -16,6 +16,11 @@ import java.util.HashSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+/**
+ * An implementation of ContactManager.  Generates IDs for Contacts and Meetings.
+ * @author markkingsbury
+ */
+
 public class ContactManagerImpl implements ContactManager {
 
 	private static final String DATA_FILE_NAME = "./cw4/contacts.txt";
@@ -44,7 +49,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * Special time adjusting constructor to allow testing where the contact manager calculates
 	 * time is in the future number of days added.
 	 * 
-	 * @param daysToAddToClockForTesting
+	 * @param daysToAddToClockForTesting the number of days to be added to the ContactManager clock
 	 */
 	public ContactManagerImpl(long daysToAddToClockForTesting) {
 		this.contacts = new HashSet<Contact>();
