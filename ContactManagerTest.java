@@ -1135,6 +1135,46 @@ public class ContactManagerTest {
 		assertEquals(k3MtgContacts, actual.get(3).getContacts());
 		assertEquals(k1MtgContacts, actual.get(4).getContacts());
 	}
+
+	@Test
+	public void testGetPastMeetingListReturnsEmptyListIfContactExistsNoMtgs() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		cm.addNewContact("Jane Kingsbury", "jk notes");
+		Contact jane = new ContactImpl(7, "Jane Kingsbury", "jk notes");
+		List<PastMeeting> actual =cm.getPastMeetingList(jane);
+		assertEquals(0, actual.size());
+	}
+	
+	@Test
+	public void testGetPastMeetingListReturnsEmptyListIfContactExistsOnlyPastMeetings() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Contact jane = new ContactImpl(1, "Anna Kingsbury", "ak notes");
+		List<PastMeeting> actual =cm.getPastMeetingList(jane);
+		assertEquals(0, actual.size());
+	}
+	
+	@Test
+	public void testGetPastMeetingListExceptionOnContactThatDoesNotExist() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Contact jane = new ContactImpl(99, "Jane Kingsbury", "jk notes");
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Contact unknown");
+		cm.getPastMeetingList(jane);
+	}
+	
+	@Test
+	public void testGetPastMeetingListExceptionOnContactIsNull() {
+		ContactManager cm = new ContactManagerImpl();
+		helpAddContactsAndMeetings(cm);
+		Contact nullcontact = null;
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Contact unknown");
+		cm.getPastMeetingList(nullcontact);	
+	}
+
 }
 
 
